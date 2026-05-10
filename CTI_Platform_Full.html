@@ -1,0 +1,1573 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>CTI Platform — منصة استخبارات التهديدات السيبرانية | متوافق مع المعايير</title>
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500;600&family=Syne:wght@700;800;900&display=swap" rel="stylesheet">
+<style>
+/* ══════════════════════════════════════════
+   ROOT VARIABLES
+══════════════════════════════════════════ */
+:root {
+  --bg:      #060b12;
+  --bg2:     #0b1320;
+  --bg3:     #0f1a2e;
+  --bg4:     #142038;
+  --card:    #0c1525;
+  --border:  rgba(30,100,210,0.14);
+  --border2: rgba(30,100,210,0.32);
+  --border3: rgba(30,100,210,0.5);
+  --accent:  #1a6fd4;
+  --accent2: #38bdf8;
+  --green:   #10b981;
+  --gdim:    rgba(16,185,129,0.1);
+  --red:     #ef4444;
+  --rdim:    rgba(239,68,68,0.1);
+  --amber:   #f59e0b;
+  --adim:    rgba(245,158,11,0.1);
+  --purple:  #8b5cf6;
+  --pdim:    rgba(139,92,246,0.1);
+  --cyan:    #06b6d4;
+  --text:    #dde6f0;
+  --text2:   #8899aa;
+  --text3:   #3d5570;
+  --mono:    'JetBrains Mono', monospace;
+  --sans:    'IBM Plex Sans Arabic', sans-serif;
+  --disp:    'Syne', sans-serif;
+  --r-sm:    6px;
+  --r-md:    10px;
+  --r-lg:    14px;
+  --r-xl:    18px;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+
+body {
+  background: var(--bg);
+  color: var(--text);
+  font-family: var(--sans);
+  font-size: 13px;
+  line-height: 1.65;
+  min-height: 100vh;
+  overflow-x: hidden;
+}
+
+/* Grid BG */
+body::after {
+  content: '';
+  position: fixed;
+  inset: 0;
+  background-image:
+    linear-gradient(rgba(26,111,212,0.025) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(26,111,212,0.025) 1px, transparent 1px);
+  background-size: 44px 44px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+/* Scrollbar */
+::-webkit-scrollbar { width: 4px; height: 4px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+/* ══════════════════════════════════════════
+   LAYOUT
+══════════════════════════════════════════ */
+.shell { display: flex; min-height: 100vh; position: relative; z-index: 1; }
+
+/* ─── SIDEBAR ─── */
+.sidebar {
+  width: 256px;
+  min-height: 100vh;
+  background: var(--bg2);
+  border-left: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  position: fixed;
+  right: 0; top: 0; bottom: 0;
+  z-index: 200;
+  overflow-y: auto;
+}
+
+.sb-brand {
+  padding: 22px 18px 18px;
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0;
+}
+
+.brand-row { display: flex; align-items: center; gap: 10px; margin-bottom: 4px; }
+
+.brand-icon {
+  width: 38px; height: 38px;
+  background: linear-gradient(135deg, #1a4fd4, #38bdf8);
+  border-radius: var(--r-md);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 20px; flex-shrink: 0;
+  box-shadow: 0 0 20px rgba(26,111,212,0.35);
+}
+
+.brand-name { font-family: var(--disp); font-size: 17px; font-weight: 900; color: #fff; letter-spacing: -0.3px; }
+.brand-sub { font-size: 9px; color: var(--text3); letter-spacing: 0.1em; text-transform: uppercase; }
+
+.compliance-chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  background: rgba(16,185,129,0.08);
+  border: 1px solid rgba(16,185,129,0.22);
+  border-radius: 20px;
+  padding: 4px 10px;
+  font-size: 9px; color: var(--green);
+  margin-top: 10px;
+}
+.compliance-chip::before {
+  content: '';
+  width: 6px; height: 6px; border-radius: 50%;
+  background: var(--green);
+  box-shadow: 0 0 6px var(--green);
+  animation: pulse 2s infinite;
+}
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.35} }
+
+.nav { padding: 10px 0; flex: 1; }
+
+.nav-sec {
+  padding: 12px 18px 4px;
+  font-size: 8.5px; font-weight: 700;
+  color: var(--text3); letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.nav-item {
+  display: flex; align-items: center; gap: 9px;
+  padding: 9px 18px;
+  cursor: pointer;
+  transition: all 0.18s;
+  color: var(--text2);
+  font-size: 12.5px;
+  border-right: 2px solid transparent;
+  position: relative;
+  user-select: none;
+}
+.nav-item:hover { background: rgba(26,111,212,0.07); color: var(--text); }
+.nav-item.active {
+  background: rgba(26,111,212,0.13);
+  color: var(--accent2);
+  border-right-color: var(--accent2);
+}
+.nav-icon { font-size: 15px; width: 20px; text-align: center; opacity: 0.85; }
+.nav-badge {
+  margin-right: auto;
+  background: var(--red);
+  border-radius: 9px; padding: 1px 6px;
+  font-size: 9px; font-weight: 700; color: #fff;
+}
+.nav-badge-g {
+  margin-right: auto;
+  background: var(--green);
+  border-radius: 9px; padding: 1px 6px;
+  font-size: 9px; font-weight: 700; color: #fff;
+}
+
+.sb-footer {
+  padding: 14px 18px;
+  border-top: 1px solid var(--border);
+  flex-shrink: 0;
+}
+.sys-status { display: flex; align-items: center; gap: 7px; margin-bottom: 6px; font-size: 11px; color: var(--text2); }
+.sys-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  background: var(--green); box-shadow: 0 0 8px var(--green);
+  animation: pulse 2s infinite;
+}
+.ver { font-size: 9px; color: var(--text3); font-family: var(--mono); }
+
+/* ─── MAIN ─── */
+.main { margin-right: 256px; flex: 1; display: flex; flex-direction: column; min-height: 100vh; }
+
+/* Topbar */
+.topbar {
+  height: 58px;
+  background: var(--bg2);
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center;
+  padding: 0 26px; gap: 14px;
+  position: sticky; top: 0; z-index: 100;
+  flex-shrink: 0;
+}
+.tb-title { font-size: 14px; font-weight: 600; color: var(--text); flex: 1; }
+.tb-sub { font-size: 11px; color: var(--text3); font-weight: 400; margin-right: 6px; }
+
+.chip {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 4px 11px; border-radius: 20px; font-size: 10px; font-weight: 500; border: 1px solid;
+}
+.chip-green { background: rgba(16,185,129,0.08); border-color: rgba(16,185,129,0.25); color: var(--green); }
+.chip-red { background: rgba(239,68,68,0.09); border-color: rgba(239,68,68,0.25); color: var(--red); }
+.chip-blue { background: rgba(56,189,248,0.08); border-color: rgba(56,189,248,0.22); color: var(--accent2); }
+.chip-amber { background: var(--adim); border-color: rgba(245,158,11,0.3); color: var(--amber); }
+
+.clock { font-size: 11px; color: var(--text3); font-family: var(--mono); }
+
+/* Content */
+.content { padding: 22px 26px; flex: 1; }
+
+/* Pages */
+.page { display: none; animation: fadeUp 0.28s ease; }
+.page.active { display: block; }
+@keyframes fadeUp { from{opacity:0;transform:translateY(6px)} to{opacity:1;transform:translateY(0)} }
+
+/* ══════════════════════════════════════════
+   COMMON COMPONENTS
+══════════════════════════════════════════ */
+
+/* Section header */
+.sec-hd { display: flex; align-items: flex-start; justify-content: space-between; margin-bottom: 18px; }
+.sec-title { font-size: 19px; font-weight: 700; color: var(--text); letter-spacing: -0.4px; }
+.sec-sub { font-size: 11px; color: var(--text3); margin-top: 3px; }
+
+/* Buttons */
+.btn {
+  display: inline-flex; align-items: center; gap: 5px;
+  padding: 7px 14px; border-radius: var(--r-sm);
+  font-size: 11.5px; font-weight: 500;
+  cursor: pointer; border: 1px solid; transition: all 0.18s;
+  font-family: var(--sans); letter-spacing: 0.01em;
+  text-decoration: none; white-space: nowrap;
+}
+.btn-primary { background: var(--accent); border-color: var(--accent); color: #fff; }
+.btn-primary:hover { background: #1e7ee8; border-color: #1e7ee8; box-shadow: 0 0 16px rgba(26,111,212,0.4); }
+.btn-outline { background: transparent; border-color: var(--border2); color: var(--text2); }
+.btn-outline:hover { border-color: var(--accent2); color: var(--accent2); }
+.btn-danger { background: rgba(239,68,68,0.1); border-color: rgba(239,68,68,0.35); color: var(--red); }
+.btn-danger:hover { background: rgba(239,68,68,0.18); }
+.btn-sm { padding: 4px 9px; font-size: 10.5px; }
+
+/* Pill */
+.pill {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 10px; padding: 2px 8px; border-radius: 11px;
+  font-weight: 500; border: 1px solid; white-space: nowrap;
+}
+.p-red { background: var(--rdim); color: var(--red); border-color: rgba(239,68,68,0.28); }
+.p-green { background: var(--gdim); color: var(--green); border-color: rgba(16,185,129,0.28); }
+.p-amber { background: var(--adim); color: var(--amber); border-color: rgba(245,158,11,0.28); }
+.p-blue { background: rgba(56,189,248,0.08); color: var(--accent2); border-color: rgba(56,189,248,0.28); }
+.p-purple { background: var(--pdim); color: var(--purple); border-color: rgba(139,92,246,0.28); }
+.p-gray { background: rgba(255,255,255,0.05); color: var(--text2); border-color: var(--border); }
+
+/* Card */
+.card {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  overflow: hidden;
+}
+.card:hover { border-color: rgba(30,100,210,0.22); }
+.card-hd {
+  padding: 14px 18px;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+}
+.card-title {
+  font-size: 12.5px; font-weight: 600; color: var(--text);
+  display: flex; align-items: center; gap: 7px;
+}
+.c-ico { font-size: 15px; }
+.card-body { padding: 16px 18px; }
+
+/* Metric cards */
+.metrics-row { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 18px; }
+.metrics-row-3 { grid-template-columns: repeat(3,1fr); }
+
+.mcard {
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: var(--r-lg);
+  padding: 16px 18px;
+  position: relative; overflow: hidden;
+  transition: border-color 0.2s, box-shadow 0.2s;
+}
+.mcard::before {
+  content: ''; position: absolute;
+  top: -10px; right: -10px;
+  width: 70px; height: 70px;
+  border-radius: 50%; filter: blur(28px); opacity: 0.5;
+}
+.mcard:hover { border-color: var(--border2); box-shadow: 0 0 24px rgba(26,111,212,0.1); }
+.mc-blue::before { background: var(--accent2); }
+.mc-green::before { background: var(--green); }
+.mc-red::before { background: var(--red); }
+.mc-amber::before { background: var(--amber); }
+.mc-purple::before { background: var(--purple); }
+
+.mc-lbl {
+  font-size: 9.5px; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.09em;
+  margin-bottom: 8px; display: flex; align-items: center; gap: 5px;
+}
+.mc-ico { font-size: 13px; }
+.mc-blue .mc-ico { color: var(--accent2); }
+.mc-green .mc-ico { color: var(--green); }
+.mc-red .mc-ico { color: var(--red); }
+.mc-amber .mc-ico { color: var(--amber); }
+.mc-purple .mc-ico { color: var(--purple); }
+
+.mc-val { font-size: 26px; font-weight: 700; color: var(--text); letter-spacing: -1px; font-family: var(--mono); }
+.mc-delta { font-size: 10px; margin-top: 5px; display: flex; align-items: center; gap: 3px; }
+.d-up { color: var(--red); }
+.d-dn { color: var(--green); }
+.d-neu { color: var(--text3); }
+
+/* Grid */
+.g2 { display: grid; grid-template-columns: 1.55fr 1fr; gap: 14px; margin-bottom: 14px; }
+.g3 { display: grid; grid-template-columns: repeat(3,1fr); gap: 14px; margin-bottom: 14px; }
+.g2eq { grid-template-columns: 1fr 1fr; }
+.g-col { display: flex; flex-direction: column; gap: 14px; }
+
+/* Tables */
+.tbl { width: 100%; border-collapse: collapse; }
+.tbl th {
+  padding: 9px 14px; text-align: right;
+  font-size: 9.5px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.09em;
+  border-bottom: 1px solid var(--border);
+  white-space: nowrap;
+}
+.tbl td { padding: 11px 14px; border-bottom: 1px solid rgba(30,100,210,0.06); }
+.tbl tbody tr { transition: background 0.14s; cursor: pointer; }
+.tbl tbody tr:hover { background: rgba(26,111,212,0.055); }
+.tbl tbody tr:last-child td { border-bottom: none; }
+
+/* Sev bar */
+.sev-bar { width: 3px; height: 30px; border-radius: 2px; flex-shrink: 0; }
+.sb-crit { background: var(--red); box-shadow: 0 0 8px rgba(239,68,68,0.6); }
+.sb-high { background: var(--amber); box-shadow: 0 0 8px rgba(245,158,11,0.5); }
+.sb-med  { background: var(--accent2); }
+.sb-low  { background: var(--green); }
+
+/* Threat cell */
+.th-cell { display: flex; align-items: center; gap: 10px; }
+.th-name { font-size: 12.5px; font-weight: 500; color: var(--text); }
+.th-sub  { font-size: 10.5px; color: var(--text3); margin-top: 2px; }
+.cvss { font-family: var(--mono); font-size: 13px; font-weight: 700; }
+.cvss-crit { color: var(--red); }
+.cvss-high { color: var(--amber); }
+.cvss-med  { color: var(--accent2); }
+
+/* IOC */
+.ioc-type {
+  font-size: 9px; padding: 2px 6px; border-radius: 4px;
+  font-weight: 700; font-family: var(--mono); flex-shrink: 0;
+  white-space: nowrap;
+}
+.it-ip     { background: rgba(56,189,248,0.1); color: var(--accent2); }
+.it-domain { background: var(--pdim); color: var(--purple); }
+.it-hash   { background: var(--adim); color: var(--amber); }
+.it-url    { background: var(--rdim); color: var(--red); }
+
+.ioc-row {
+  display: flex; align-items: center; gap: 8px;
+  padding: 7px 10px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r-sm); margin-bottom: 5px;
+  cursor: pointer; transition: border-color 0.15s;
+}
+.ioc-row:hover { border-color: var(--border2); }
+.ioc-val { font-family: var(--mono); font-size: 11px; color: var(--text); flex: 1; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ioc-conf { font-size: 10px; font-weight: 700; flex-shrink: 0; }
+
+/* Tabs */
+.tabs { display: flex; gap: 3px; margin-bottom: 12px; flex-wrap: wrap; }
+.tab {
+  padding: 5px 12px; border-radius: 20px; font-size: 11px; cursor: pointer;
+  border: 1px solid var(--border); background: transparent; color: var(--text2);
+  transition: all 0.18s; font-family: var(--sans); white-space: nowrap;
+}
+.tab.on { background: rgba(26,111,212,0.14); border-color: var(--accent); color: var(--accent2); }
+
+/* Alert items */
+.alert-row {
+  display: flex; gap: 10px; padding: 9px 12px;
+  border-radius: var(--r-sm); border-right: 3px solid;
+  cursor: pointer; transition: background 0.14s; margin-bottom: 7px;
+}
+.alert-row:last-child { margin-bottom: 0; }
+.alert-row:hover { background: rgba(255,255,255,0.025); }
+.ar-crit { border-right-color: var(--red); background: rgba(239,68,68,0.045); }
+.ar-high { border-right-color: var(--amber); background: rgba(245,158,11,0.04); }
+.ar-info { border-right-color: var(--accent2); background: rgba(56,189,248,0.04); }
+.ar-icon { font-size: 15px; flex-shrink: 0; margin-top: 1px; }
+.ar-crit .ar-icon { color: var(--red); }
+.ar-high .ar-icon { color: var(--amber); }
+.ar-info .ar-icon { color: var(--accent2); }
+.ar-title { font-size: 11.5px; font-weight: 500; color: var(--text); }
+.ar-desc  { font-size: 10.5px; color: var(--text3); margin-top: 1px; }
+.ar-time  { font-size: 9.5px; color: var(--text3); margin-top: 3px; font-family: var(--mono); }
+
+/* Progress bars */
+.pbar-wrap { margin-bottom: 10px; }
+.pbar-hd { display: flex; justify-content: space-between; font-size: 11px; color: var(--text2); margin-bottom: 4px; }
+.pbar-val { font-family: var(--mono); }
+.pbar-track { height: 6px; background: var(--bg4); border-radius: 3px; overflow: hidden; }
+.pbar-fill { height: 100%; border-radius: 3px; transition: width 0.8s ease; }
+
+/* Timeline */
+.tl { display: flex; flex-direction: column; }
+.tl-item { display: flex; gap: 12px; padding-bottom: 14px; position: relative; }
+.tl-item:not(:last-child)::before {
+  content: ''; position: absolute;
+  right: 17px; top: 22px; bottom: 0;
+  width: 1px; background: var(--border);
+}
+.tl-dot {
+  width: 7px; height: 7px; border-radius: 50%;
+  flex-shrink: 0; margin-top: 5px;
+  border: 2px solid; margin-right: 8px; margin-left: 2px;
+}
+.td-red   { background: var(--red); border-color: rgba(239,68,68,0.35); box-shadow: 0 0 6px rgba(239,68,68,0.5); }
+.td-amber { background: var(--amber); border-color: rgba(245,158,11,0.35); }
+.td-blue  { background: var(--accent2); border-color: rgba(56,189,248,0.35); }
+.td-green { background: var(--green); border-color: rgba(16,185,129,0.35); }
+.tl-body { flex: 1; }
+.tl-title { font-size: 12px; font-weight: 500; color: var(--text); }
+.tl-time  { font-size: 9.5px; color: var(--text3); margin-top: 2px; font-family: var(--mono); }
+.tl-desc  { font-size: 11px; color: var(--text2); margin-top: 3px; }
+
+/* AI box */
+.ai-card {
+  background: linear-gradient(135deg, rgba(26,111,212,0.08), rgba(139,92,246,0.04));
+  border: 1px solid rgba(26,111,212,0.2);
+  border-radius: var(--r-md); padding: 13px; margin-bottom: 12px;
+}
+.ai-lbl {
+  font-size: 9.5px; font-weight: 700; color: var(--accent2);
+  text-transform: uppercase; letter-spacing: 0.1em;
+  margin-bottom: 7px; display: flex; align-items: center; gap: 5px;
+}
+.ai-text { font-size: 11.5px; color: var(--text2); line-height: 1.75; }
+
+/* Geo bars */
+.geo-row { display: flex; align-items: center; gap: 10px; margin-bottom: 9px; }
+.geo-flag { font-size: 18px; flex-shrink: 0; }
+.geo-name { font-size: 11.5px; font-weight: 500; color: var(--text); min-width: 100px; }
+.geo-track { flex: 1; height: 4px; background: var(--bg4); border-radius: 2px; }
+.geo-fill { height: 100%; background: linear-gradient(90deg, var(--accent), var(--accent2)); border-radius: 2px; transition: width 0.7s ease; }
+.geo-cnt { font-size: 10.5px; color: var(--text3); font-family: var(--mono); min-width: 40px; text-align: left; }
+
+/* Chart */
+.chart-bars { display: flex; align-items: flex-end; gap: 5px; height: 140px; padding: 0 2px; }
+.cb-grp { flex: 1; display: flex; flex-direction: column; align-items: center; gap: 5px; }
+.cb-wrap { width: 100%; display: flex; align-items: flex-end; gap: 2px; flex: 1; }
+.cb-bar { flex: 1; border-radius: 3px 3px 0 0; cursor: pointer; transition: opacity 0.2s; }
+.cb-bar:hover { opacity: 0.72; }
+.cb-lbl { font-size: 9px; color: var(--text3); font-family: var(--mono); }
+
+/* MITRE */
+.mitre-scroll { overflow-x: auto; padding-bottom: 4px; }
+.mitre-grid { display: flex; gap: 5px; min-width: 760px; }
+.mitre-col { flex: 1; }
+.mitre-phase {
+  font-size: 8px; font-weight: 700; color: var(--text3);
+  text-transform: uppercase; letter-spacing: 0.07em;
+  text-align: center; padding: 5px 3px; margin-bottom: 4px;
+  border-bottom: 1px solid var(--border);
+}
+.mc { font-size: 8.5px; padding: 5px 4px; border-radius: 4px; text-align: center; cursor: pointer; border: 1px solid; transition: all 0.14s; color: var(--text2); border-color: var(--border); background: var(--bg3); margin-bottom: 3px; line-height: 1.3; }
+.mc:hover { border-color: var(--border2); color: var(--text); }
+.mc.hot  { background: rgba(239,68,68,0.14); border-color: rgba(239,68,68,0.38); color: #fca5a5; }
+.mc.warm { background: rgba(245,158,11,0.1); border-color: rgba(245,158,11,0.32); color: #fcd34d; }
+.mc.cool { background: rgba(56,189,248,0.08); border-color: rgba(56,189,248,0.28); color: #7dd3fc; }
+
+/* COMPLIANCE */
+.المعيار-doms { display: grid; grid-template-columns: repeat(4,1fr); gap: 12px; margin-bottom: 18px; }
+.المعيار-dc {
+  background: var(--card); border: 1px solid var(--border);
+  border-radius: var(--r-lg); padding: 15px; cursor: pointer;
+  transition: all 0.18s;
+}
+.المعيار-dc:hover, .المعيار-dc.sel { border-color: var(--border2); box-shadow: 0 0 18px rgba(26,111,212,0.12); }
+.sdc-num { font-size: 9px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 5px; }
+.sdc-name { font-size: 12.5px; font-weight: 600; color: var(--text); margin-bottom: 7px; line-height: 1.35; }
+.sdc-pct { font-size: 22px; font-weight: 700; font-family: var(--mono); margin-bottom: 6px; }
+.sdc-bar { height: 3px; background: var(--bg4); border-radius: 2px; }
+.sdc-fill { height: 100%; border-radius: 2px; }
+.d1 .sdc-num, .d1 .sdc-pct { color: var(--accent2); } .d1 .sdc-fill { background: var(--accent2); }
+.d2 .sdc-num, .d2 .sdc-pct { color: var(--green); }   .d2 .sdc-fill { background: var(--green); }
+.d3 .sdc-num, .d3 .sdc-pct { color: var(--amber); }   .d3 .sdc-fill { background: var(--amber); }
+.d4 .sdc-num, .d4 .sdc-pct { color: var(--purple); }  .d4 .sdc-fill { background: var(--purple); }
+
+/* Status chips */
+.sc { display: inline-flex; align-items: center; gap: 4px; font-size: 10px; padding: 2px 8px; border-radius: 10px; font-weight: 500; border: 1px solid; }
+.sc-ok   { background: var(--gdim); color: var(--green); border-color: rgba(16,185,129,0.3); }
+.sc-part { background: var(--adim); color: var(--amber); border-color: rgba(245,158,11,0.3); }
+.sc-gap  { background: var(--rdim); color: var(--red);   border-color: rgba(239,68,68,0.3); }
+
+/* Report */
+.rpt-hero {
+  display: flex; align-items: center; gap: 18px;
+  background: linear-gradient(135deg, var(--card), var(--bg3));
+  border: 1px solid var(--border); border-radius: var(--r-lg);
+  padding: 20px; margin-bottom: 16px;
+}
+.rpt-big-icon {
+  width: 58px; height: 58px; border-radius: var(--r-lg);
+  background: rgba(239,68,68,0.14); border: 1px solid rgba(239,68,68,0.3);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 28px; flex-shrink: 0;
+}
+.rpt-hd-title { font-size: 17px; font-weight: 700; color: var(--text); margin-bottom: 4px; }
+.rpt-hd-sub { font-size: 11px; color: var(--text3); }
+
+.rpt-meta { display: grid; grid-template-columns: repeat(3,1fr); gap: 12px; margin-bottom: 16px; }
+.rpt-mi { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-md); padding: 13px; }
+.rpt-mi-lbl { font-size: 9.5px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 5px; }
+.rpt-mi-val { font-size: 13px; font-weight: 600; color: var(--text); }
+
+.rpt-sec { background: var(--card); border: 1px solid var(--border); border-radius: var(--r-lg); margin-bottom: 14px; overflow: hidden; }
+.rpt-sec-hd {
+  padding: 13px 18px; border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  background: rgba(26,111,212,0.035);
+}
+.rpt-sec-title { font-size: 12.5px; font-weight: 600; color: var(--text); display: flex; align-items: center; gap: 7px; }
+.rpt-sec-body { padding: 16px 18px; }
+
+.ioc-block {
+  font-family: var(--mono); font-size: 10.5px; color: var(--text2);
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 12px; line-height: 2.1;
+  margin-top: 6px;
+}
+
+.rec-list { list-style: none; display: flex; flex-direction: column; gap: 7px; }
+.rec-item {
+  display: flex; align-items: flex-start; gap: 9px;
+  padding: 9px 12px; background: var(--bg3);
+  border: 1px solid var(--border); border-radius: var(--r-sm);
+  font-size: 11.5px; color: var(--text2);
+}
+.rec-icon { color: var(--green); font-size: 14px; flex-shrink: 0; margin-top: 1px; }
+
+/* Firewall */
+.fw-table th { font-family: var(--sans); }
+.fw-table td { font-family: var(--mono); font-size: 11px; color: var(--text2); }
+.rule-act {
+  display: inline-block; padding: 2px 8px; border-radius: 4px;
+  font-size: 9.5px; font-weight: 700; font-family: var(--sans);
+}
+.ra-deny  { background: var(--rdim); color: var(--red); }
+.ra-allow { background: var(--gdim); color: var(--green); }
+.ra-alert { background: var(--adim); color: var(--amber); }
+
+.prio-badge {
+  display: inline-flex; width: 22px; height: 22px; border-radius: 50%;
+  align-items: center; justify-content: center; font-size: 10px; font-weight: 700;
+}
+.pb1 { background: rgba(239,68,68,0.18); color: var(--red); }
+.pb2 { background: rgba(245,158,11,0.15); color: var(--amber); }
+.pb3 { background: rgba(56,189,248,0.12); color: var(--accent2); }
+
+.code-block {
+  font-family: var(--mono); font-size: 10px; color: #7dd3fc;
+  background: var(--bg); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 14px; line-height: 2;
+  overflow-x: auto;
+}
+.code-block .c-cmt { color: var(--text3); }
+.code-block .c-cmd { color: var(--green); }
+.code-block .c-arg { color: var(--amber); }
+
+/* Detail grid */
+.det-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; }
+.det-lbl { font-size: 9.5px; color: var(--text3); text-transform: uppercase; letter-spacing: 0.07em; margin-bottom: 5px; }
+.det-val { font-size: 12.5px; color: var(--text); }
+
+/* Model cards */
+.model-card {
+  padding: 14px; background: var(--bg3);
+  border: 1px solid var(--border); border-radius: var(--r-md);
+  margin-bottom: 10px; transition: border-color 0.18s;
+}
+.model-card:hover { border-color: var(--border2); }
+.model-hd { display: flex; justify-content: space-between; align-items: center; margin-bottom: 7px; }
+.model-name { font-size: 13px; font-weight: 600; color: var(--text); }
+.model-desc { font-size: 10.5px; color: var(--text3); margin-bottom: 8px; }
+.model-stats { display: flex; gap: 16px; font-size: 10px; color: var(--text3); font-family: var(--mono); }
+.model-stats span { display: flex; align-items: center; gap: 4px; }
+
+/* OSINT sources */
+.src-block {
+  padding: 11px; background: var(--bg3);
+  border: 1px solid var(--border); border-radius: var(--r-md);
+  margin-bottom: 7px;
+}
+.src-lbl { font-size: 10px; font-weight: 700; margin-bottom: 4px; }
+.src-val { font-size: 11px; color: var(--text2); }
+
+/* TLP labels */
+.tlp {
+  font-size: 9px; font-family: var(--mono); font-weight: 700;
+  padding: 2px 7px; border-radius: 4px; white-space: nowrap;
+}
+.tlp-red    { background: rgba(239,68,68,0.15); color: var(--red); }
+.tlp-amber  { background: var(--adim); color: var(--amber); }
+.tlp-green  { background: var(--gdim); color: var(--green); }
+.tlp-white  { background: rgba(255,255,255,0.07); color: #ccc; }
+
+/* Input */
+input[type=text], select {
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: var(--r-sm); padding: 6px 12px;
+  color: var(--text); font-size: 11.5px; font-family: var(--sans);
+  outline: none; transition: border-color 0.18s;
+}
+input[type=text]:focus, select:focus { border-color: var(--accent); }
+select option { background: var(--bg2); }
+</style>
+</head>
+<body>
+<div class="shell">
+
+<!-- ══════════════ SIDEBAR ══════════════ -->
+<aside class="sidebar">
+  <div class="sb-brand">
+    <div class="brand-row">
+      <div class="brand-icon">🛡</div>
+      <div>
+        <div class="brand-name">CTI Platform</div>
+        <div class="brand-sub">Cyber Threat Intelligence</div>
+      </div>
+    </div>
+    <div class="compliance-chip">متوافق مع معايير الأمن السيبراني للقطاع المالي</div>
+  </div>
+
+  <nav class="nav">
+    <div class="nav-sec">الرئيسية</div>
+    <div class="nav-item active" onclick="go('dashboard',this)"><span class="nav-icon">📊</span> لوحة التحكم</div>
+    <div class="nav-item" onclick="go('threats',this)"><span class="nav-icon">⚠️</span> التهديدات المكتشفة <span class="nav-badge">34</span></div>
+    <div class="nav-item" onclick="go('ioc',this)"><span class="nav-icon">🔎</span> مؤشرات الاختراق (IOC)</div>
+
+    <div class="nav-sec">التحليل</div>
+    <div class="nav-item" onclick="go('mitre',this)"><span class="nav-icon">🗺️</span> MITRE ATT&CK</div>
+    <div class="nav-item" onclick="go('osint',this)"><span class="nav-icon">🌐</span> مصادر OSINT</div>
+    <div class="nav-item" onclick="go('ml',this)"><span class="nav-icon">🤖</span> نماذج الذكاء الاصطناعي</div>
+    <div class="nav-item" onclick="go('vuln',this)"><span class="nav-icon">🕳️</span> إدارة الثغرات (P19)</div>
+
+    <div class="nav-sec">التقارير والوقاية</div>
+    <div class="nav-item" onclick="go('report',this)"><span class="nav-icon">📄</span> تقارير التهديدات</div>
+    <div class="nav-item" onclick="go('firewall',this)"><span class="nav-icon">🔥</span> قواعد الجدار الناري</div>
+    <div class="nav-item" onclick="go('response',this)"><span class="nav-icon">🚨</span> الاستجابة للحوادث</div>
+
+    <div class="nav-sec">الامتثال</div>
+    <div class="nav-item" onclick="go('compliance',this)"><span class="nav-icon">✅</span> مبادئ استخبارات التهديدات (19 مبدأ) <span class="nav-badge-g">84%</span></div>
+    <div class="nav-item" onclick="go('roadmap',this)"><span class="nav-icon">📅</span> خطة التطوير (Roadmap)</div>
+  </nav>
+
+  <div class="sb-footer">
+    <div class="sys-status"><div class="sys-dot"></div> جميع الأنظمة تعمل</div>
+    <div class="ver">Build 2025.05 · CTI Platform v1.0 · GPL-3</div>
+  </div>
+</aside>
+
+<!-- ══════════════ MAIN ══════════════ -->
+<main class="main">
+  <div class="topbar">
+    <div class="tb-title">منصة استخبارات التهديدات السيبرانية<span class="tb-sub">— القطاع المالي السعودي</span></div>
+    <div class="chip chip-green"><span style="width:6px;height:6px;border-radius:50%;background:var(--green);display:inline-block;box-shadow:0 0 5px var(--green);animation:pulse 2s infinite"></span> مراقبة حية</div>
+    <div class="chip chip-red">⬆ مستوى التهديد: عالٍ</div>
+    <div class="chip chip-amber">TLP:AMBER</div>
+    <div class="clock" id="clock">--:--:--</div>
+  </div>
+
+  <div class="content">
+
+<!-- ═════════════════════════════════════
+     PAGE: DASHBOARD
+═════════════════════════════════════ -->
+<div class="page active" id="page-dashboard">
+  <div class="sec-hd">
+    <div><div class="sec-title">لوحة التحكم الرئيسية</div><div class="sec-sub">نظرة شاملة · آخر تحديث منذ 23 ثانية ·</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline" onclick="go('compliance',document.querySelectorAll('.nav-item')[11])">✅ مستوى الامتثال</button>
+      <button class="btn btn-primary" onclick="go('report',document.querySelectorAll('.nav-item')[8])">📄 توليد تقرير</button>
+    </div>
+  </div>
+
+  <div class="metrics-row">
+    <div class="mcard mc-red"><div class="mc-lbl"><span class="mc-ico">⚠️</span> تهديدات حرجة</div><div class="mc-val">34</div><div class="mc-delta d-up">↑ 3 منذ أمس</div></div>
+    <div class="mcard mc-blue"><div class="mc-lbl"><span class="mc-ico">🔍</span> إجمالي التهديدات</div><div class="mc-val">2,847</div><div class="mc-delta d-up">↑ 12% هذا الأسبوع</div></div>
+    <div class="mcard mc-green"><div class="mc-lbl"><span class="mc-ico">✅</span> دقة الكشف</div><div class="mc-val">98.6%</div><div class="mc-delta d-dn">↓ إنذارات كاذبة: 1.4%</div></div>
+    <div class="mcard mc-amber"><div class="mc-lbl"><span class="mc-ico">⚡</span> زمن الاستجابة</div><div class="mc-val">4.2s</div><div class="mc-delta d-dn">↓ تحسن 22%</div></div>
+  </div>
+
+  <div class="g2">
+    <!-- Threat table -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">⚠️</span> أحدث التهديدات (P7 — Analyze Information)</div><span class="pill p-red">آخر 24 ساعة</span></div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr><th>التهديد</th><th>النوع</th><th>CVSS</th><th>TLP</th><th>الحالة</th></tr></thead>
+          <tbody>
+            <tr onclick="go('report',document.querySelectorAll('.nav-item')[8])">
+              <td><div class="th-cell"><div class="sev-bar sb-crit"></div><div><div class="th-name">APT41 — Winnti Group</div><div class="th-sub">Advanced Persistent Threat · 🇨🇳 صيني</div></div></div></td>
+              <td><span class="pill p-red">APT</span></td><td><span class="cvss cvss-crit">9.8</span></td>
+              <td><span class="tlp tlp-amber">TLP:AMBER</span></td><td><span class="pill p-red">حرج</span></td>
+            </tr>
+            <tr>
+              <td><div class="th-cell"><div class="sev-bar sb-crit"></div><div><div class="th-name">BlackCat Ransomware v3</div><div class="th-sub">Ransomware · مزدوج الابتزاز · Rust</div></div></div></td>
+              <td><span class="pill p-red">فدية</span></td><td><span class="cvss cvss-crit">9.4</span></td>
+              <td><span class="tlp tlp-amber">TLP:AMBER</span></td><td><span class="pill p-red">حرج</span></td>
+            </tr>
+            <tr>
+              <td><div class="th-cell"><div class="sev-bar sb-high"></div><div><div class="th-name">Spear Phishing Campaign</div><div class="th-sub">Social Engineering · القطاع المالي</div></div></div></td>
+              <td><span class="pill p-amber">تصيد</span></td><td><span class="cvss cvss-high">7.9</span></td>
+              <td><span class="tlp tlp-green">TLP:GREEN</span></td><td><span class="pill p-amber">عالٍ</span></td>
+            </tr>
+            <tr>
+              <td><div class="th-cell"><div class="sev-bar sb-high"></div><div><div class="th-name">CVE-2025-1234 Zero-Day</div><div class="th-sub">Apache Log4j variant · RCE</div></div></div></td>
+              <td><span class="pill p-amber">ثغرة</span></td><td><span class="cvss cvss-high">7.5</span></td>
+              <td><span class="tlp tlp-red">TLP:RED</span></td><td><span class="pill p-amber">عالٍ</span></td>
+            </tr>
+            <tr>
+              <td><div class="th-cell"><div class="sev-bar sb-med"></div><div><div class="th-name">Mirai Botnet Variant</div><div class="th-sub">DDoS · 45,000 bot · IoT</div></div></div></td>
+              <td><span class="pill p-blue">DDoS</span></td><td><span class="cvss cvss-med">6.1</span></td>
+              <td><span class="tlp tlp-green">TLP:GREEN</span></td><td><span class="pill p-blue">متوسط</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Right col -->
+    <div class="g-col">
+      <!-- Chart -->
+      <div class="card">
+        <div class="card-hd"><div class="card-title"><span class="c-ico">📈</span> نشاط التهديدات — 7 أيام</div><span class="pill p-blue">يومي</span></div>
+        <div class="card-body">
+          <div class="chart-bars" id="act-chart"></div>
+          <div style="display:flex;justify-content:space-between;margin-top:6px;font-size:9px;color:var(--text3);font-family:var(--mono)">
+            <span>أحد</span><span>اثن</span><span>ثلا</span><span>أرب</span><span>خمي</span><span>جمع</span><span>سبت</span>
+          </div>
+        </div>
+      </div>
+      <!-- Geo -->
+      <div class="card">
+        <div class="card-hd"><div class="card-title"><span class="c-ico">🌍</span> مصادر الهجمات (P12 — Threat Landscape)</div></div>
+        <div class="card-body">
+          <div class="geo-row"><span class="geo-flag">🇨🇳</span><span class="geo-name">الصين</span><div class="geo-track"><div class="geo-fill" style="width:100%"></div></div><span class="geo-cnt">834</span></div>
+          <div class="geo-row"><span class="geo-flag">🇷🇺</span><span class="geo-name">روسيا</span><div class="geo-track"><div class="geo-fill" style="width:73%"></div></div><span class="geo-cnt">612</span></div>
+          <div class="geo-row"><span class="geo-flag">🇰🇵</span><span class="geo-name">كوريا الشمالية</span><div class="geo-track"><div class="geo-fill" style="width:47%"></div></div><span class="geo-cnt">389</span></div>
+          <div class="geo-row"><span class="geo-flag">🇮🇷</span><span class="geo-name">إيران</span><div class="geo-track"><div class="geo-fill" style="width:29%"></div></div><span class="geo-cnt">241</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="g3">
+    <!-- AI -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">🤖</span> تحليل الذكاء الاصطناعي (P7)</div><span class="pill p-purple">AI-Powered</span></div>
+      <div class="card-body">
+        <div class="ai-card"><div class="ai-lbl">✦ ملخص تلقائي</div><div class="ai-text">ارتفاع ملحوظ في هجمات APT خلال 48 ساعة. تطابق 87% مع أنماط Winnti. يُوصى برفع مستوى التأهب للقطاع المالي فوراً.</div></div>
+        <div class="alert-row ar-crit"><span class="ar-icon">🔴</span><div><div class="ar-title">تصعيد صلاحيات مشبوه</div><div class="ar-desc">Privilege Escalation في شبكة المؤسسة</div><div class="ar-time">منذ 3 دقائق</div></div></div>
+        <div class="alert-row ar-high"><span class="ar-icon">🟡</span><div><div class="ar-title">C2 Communication Detected</div><div class="ar-desc">اتصال مشبوه بخادم تحكم خارجي</div><div class="ar-time">منذ 11 دقيقة</div></div></div>
+        <div class="alert-row ar-info"><span class="ar-icon">🔵</span><div><div class="ar-title">Port Scan Detected</div><div class="ar-desc">مسح شامل للمنافذ من 45.12.*.*</div><div class="ar-time">منذ 28 دقيقة</div></div></div>
+      </div>
+    </div>
+    <!-- IOC -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">🔎</span> مؤشرات الاختراق (P18)</div></div>
+      <div class="card-body">
+        <div class="tabs">
+          <button class="tab on" onclick="switchTab(this,'ip','ioc-dash')">IPs</button>
+          <button class="tab" onclick="switchTab(this,'domain','ioc-dash')">Domains</button>
+          <button class="tab" onclick="switchTab(this,'hash','ioc-dash')">Hashes</button>
+        </div>
+        <div id="ioc-dash"></div>
+      </div>
+    </div>
+    <!-- Timeline -->
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">🕐</span> جدول الحوادث (P9)</div><span class="pill p-blue">اليوم</span></div>
+      <div class="card-body">
+        <div class="tl">
+          <div class="tl-item"><div class="tl-dot td-red"></div><div class="tl-body"><div class="tl-title">اكتشاف APT41 IOCs</div><div class="tl-time">09:14:23 AST</div><div class="tl-desc">رُصد 12 IP جديد مرتبط بـ Winnti Group</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-amber"></div><div class="tl-body"><div class="tl-title">محاولة Spear Phishing</div><div class="tl-time">10:38:07 AST</div><div class="tl-desc">بريد مزيف يستهدف الإدارة التنفيذية</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-blue"></div><div class="tl-body"><div class="tl-title">Port Scan من 185.220.*</div><div class="tl-time">12:05:44 AST</div><div class="tl-desc">مسح 45K منفذ — روسيا</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-red"></div><div class="tl-body"><div class="tl-title">CVE-2025-1234 استغلال</div><div class="tl-time">14:22:11 AST</div><div class="tl-desc">محاولة RCE عبر JNDI injection</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-green"></div><div class="tl-body"><div class="tl-title">قواعد Firewall مُحدَّثة</div><div class="tl-time">14:35:00 AST</div><div class="tl-desc">حجب 4 IPs حرجة تلقائياً</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════
+     PAGE: THREATS
+═════════════════════════════════════ -->
+<div class="page" id="page-threats">
+  <div class="sec-hd">
+    <div><div class="sec-title">التهديدات المكتشفة</div><div class="sec-sub">جميع التهديدات المُصنَّفة ·· P7: Analyze</div></div>
+    <div style="display:flex;gap:8px">
+      <select><option>جميع الأنواع</option><option>APT</option><option>Ransomware</option><option>Phishing</option><option>DDoS</option><option>Vulnerability</option></select>
+      <select><option>جميع الخطورات</option><option>حرج (9+)</option><option>عالٍ (7-8.9)</option><option>متوسط (4-6.9)</option></select>
+      <button class="btn btn-outline">📊 تصدير CSV</button>
+    </div>
+  </div>
+
+  <div class="metrics-row">
+    <div class="mcard mc-red"><div class="mc-lbl"><span class="mc-ico">🔴</span> حرج (CVSS 9+)</div><div class="mc-val">34</div><div class="mc-delta d-up">↑ 3 جديدة</div></div>
+    <div class="mcard mc-amber"><div class="mc-lbl"><span class="mc-ico">🟡</span> عالٍ (7–8.9)</div><div class="mc-val">127</div><div class="mc-delta d-up">↑ 12 جديدة</div></div>
+    <div class="mcard mc-blue"><div class="mc-lbl"><span class="mc-ico">🔵</span> متوسط (4–6.9)</div><div class="mc-val">489</div><div class="mc-delta d-neu">→ مستقر</div></div>
+    <div class="mcard mc-green"><div class="mc-lbl"><span class="mc-ico">🟢</span> منخفض (&lt;4)</div><div class="mc-val">2,197</div><div class="mc-delta d-dn">↓ تراجع</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><div class="card-title"><span class="c-ico">⚠️</span> قائمة التهديدات الشاملة</div><span class="pill p-gray">2,847 إجمالي</span></div>
+    <div style="overflow-x:auto">
+      <table class="tbl" id="threats-tbl">
+        <thead><tr><th>التهديد / الثغرة</th><th>النوع</th><th>المصدر الجغرافي</th><th>CVSS</th><th>TLP</th><th>المبدأ</th><th>الحالة</th><th>إجراء</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════
+     PAGE: IOC
+═════════════════════════════════════ -->
+<div class="page" id="page-ioc">
+  <div class="sec-hd">
+    <div><div class="sec-title">مؤشرات الاختراق (IOCs)</div><div class="sec-sub">· جمع وتجميع وتطبيق IOCs في البنية الدفاعية</div></div>
+    <div style="display:flex;gap:8px">
+      <input type="text" placeholder="بحث عن IOC..." style="width:200px">
+      <button class="btn btn-outline">📥 تصدير STIX 2.1</button>
+      <button class="btn btn-outline">📥 تصدير MISP</button>
+    </div>
+  </div>
+
+  <div class="metrics-row">
+    <div class="mcard mc-red"><div class="mc-lbl"><span class="mc-ico">🔴</span> عناوين IP خبيثة</div><div class="mc-val">1,247</div><div class="mc-delta d-up">↑ 89 اليوم</div></div>
+    <div class="mcard mc-amber"><div class="mc-lbl"><span class="mc-ico">🌐</span> نطاقات مشبوهة</div><div class="mc-val">834</div><div class="mc-delta d-up">↑ 34 اليوم</div></div>
+    <div class="mcard mc-blue"><div class="mc-lbl"><span class="mc-ico">🔑</span> هاشات ملفات</div><div class="mc-val">2,103</div><div class="mc-delta d-up">↑ 12 اليوم</div></div>
+    <div class="mcard mc-green"><div class="mc-lbl"><span class="mc-ico">📏</span> قواعد YARA</div><div class="mc-val">456</div><div class="mc-delta d-dn">↑ 8 جديدة</div></div>
+  </div>
+
+  <div class="g2eq g2">
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">🔍</span> قاعدة بيانات IOC الكاملة</div></div>
+      <div style="overflow-x:auto">
+        <table class="tbl">
+          <thead><tr><th>النوع</th><th>القيمة</th><th>التهديد المرتبط</th><th>ثقة</th><th>المصدر</th><th>أول رصد</th><th>الحالة</th></tr></thead>
+          <tbody id="ioc-full-tbl"></tbody>
+        </table>
+      </div>
+    </div>
+    <div class="g-col">
+      <div class="card">
+        <div class="card-hd"><div class="card-title"><span class="c-ico">📊</span> توزيع IOCs حسب النوع</div></div>
+        <div class="card-body">
+          <div class="pbar-wrap"><div class="pbar-hd"><span>عناوين IPv4</span><span class="pbar-val" style="color:var(--red)">1,247 — 29%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:29%;background:var(--red)"></div></div></div>
+          <div class="pbar-wrap"><div class="pbar-hd"><span>نطاقات Domain</span><span class="pbar-val" style="color:var(--purple)">834 — 19%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:19%;background:var(--purple)"></div></div></div>
+          <div class="pbar-wrap"><div class="pbar-hd"><span>هاشات SHA-256</span><span class="pbar-val" style="color:var(--amber)">2,103 — 49%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:49%;background:var(--amber)"></div></div></div>
+          <div class="pbar-wrap"><div class="pbar-hd"><span>قواعد YARA</span><span class="pbar-val" style="color:var(--green)">456 — 11%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:11%;background:var(--green)"></div></div></div>
+          <div class="pbar-wrap"><div class="pbar-hd"><span>روابط URL</span><span class="pbar-val" style="color:var(--accent2)">312 — 7%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:7%;background:var(--accent2)"></div></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title"><span class="c-ico">🔗</span> ربط IOC بالتهديد</div></div>
+        <div class="card-body">
+          <div style="display:flex;flex-direction:column;gap:7px">
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm)"><span style="font-size:11px;color:var(--text)">APT41 / Winnti</span><span class="pill p-red">412 IOC</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm)"><span style="font-size:11px;color:var(--text)">BlackCat Ransomware</span><span class="pill p-red">287 IOC</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm)"><span style="font-size:11px;color:var(--text)">Lazarus Group</span><span class="pill p-amber">198 IOC</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm)"><span style="font-size:11px;color:var(--text)">Mirai Botnet</span><span class="pill p-blue">156 IOC</span></div>
+            <div style="display:flex;justify-content:space-between;align-items:center;padding:7px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm)"><span style="font-size:11px;color:var(--text)">Cobalt Strike C2</span><span class="pill p-amber">134 IOC</span></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════
+     PAGE: MITRE
+═════════════════════════════════════ -->
+<div class="page" id="page-mitre">
+  <div class="sec-hd">
+    <div><div class="sec-title">مصفوفة MITRE ATT&CK</div><div class="sec-sub">· P16: Identify TTPs · تحليل أساليب وتقنيات وإجراءات مجموعات الاختراق</div></div>
+    <div style="display:flex;gap:6px;align-items:center">
+      <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3)"><span style="width:9px;height:9px;border-radius:2px;background:rgba(239,68,68,0.3);display:inline-block"></span>حرج/نشط</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3)"><span style="width:9px;height:9px;border-radius:2px;background:rgba(245,158,11,0.2);display:inline-block"></span>مرصود</span>
+      <span style="display:flex;align-items:center;gap:4px;font-size:10px;color:var(--text3)"><span style="width:9px;height:9px;border-radius:2px;background:rgba(56,189,248,0.15);display:inline-block"></span>مراقبة</span>
+    </div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-hd"><div class="card-title"><span class="c-ico">🗺️</span> خريطة TTPs — APT41 النشطة حالياً</div><span class="pill p-red">14 تقنية نشطة</span></div>
+    <div class="card-body"><div class="mitre-scroll"><div class="mitre-grid" id="mitre-matrix"></div></div></div>
+  </div>
+
+  <div class="g2 g2eq">
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">🔗</span> Kill Chain — APT41 (P15)</div></div>
+      <div class="card-body">
+        <div class="tl">
+          <div class="tl-item"><div class="tl-dot td-blue"></div><div class="tl-body"><div class="tl-title">1. Reconnaissance</div><div class="tl-desc">T1589: Gather Victim Identity Info · LinkedIn · OSINT · WHOIS</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-blue"></div><div class="tl-body"><div class="tl-title">2. Resource Development</div><div class="tl-desc">T1588: Obtain Capabilities · ShadowPad · HIGHNOON backdoor</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-amber"></div><div class="tl-body"><div class="tl-title">3. Initial Access</div><div class="tl-desc">T1195: Supply Chain Compromise + T1566: Spear Phishing</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-red"></div><div class="tl-body"><div class="tl-title">4. Execution + Persistence</div><div class="tl-desc">T1053: Scheduled Task · T1547: Registry Run Keys</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-red"></div><div class="tl-body"><div class="tl-title">5. Lateral Movement + C2</div><div class="tl-desc">T1550: Pass-the-Hash · HTTPS C2 إلى 45.132.227.89</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-amber"></div><div class="tl-body"><div class="tl-title">6. Exfiltration</div><div class="tl-desc">T1041: Exfiltration Over C2 · بيانات مشفرة</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">📊</span> توزيع TTPs المكتشفة (P16)</div></div>
+      <div class="card-body">
+        <div class="pbar-wrap"><div class="pbar-hd"><span>Initial Access (TA0001)</span><span class="pbar-val" style="color:var(--red)">34%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:34%;background:var(--red)"></div></div></div>
+        <div class="pbar-wrap"><div class="pbar-hd"><span>Execution (TA0002)</span><span class="pbar-val" style="color:var(--amber)">28%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:28%;background:var(--amber)"></div></div></div>
+        <div class="pbar-wrap"><div class="pbar-hd"><span>Persistence (TA0003)</span><span class="pbar-val" style="color:var(--accent2)">19%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:19%;background:var(--accent2)"></div></div></div>
+        <div class="pbar-wrap"><div class="pbar-hd"><span>Lateral Movement (TA0008)</span><span class="pbar-val" style="color:var(--purple)">12%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:12%;background:var(--purple)"></div></div></div>
+        <div class="pbar-wrap"><div class="pbar-hd"><span>Exfiltration (TA0010)</span><span class="pbar-val" style="color:var(--green)">7%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:7%;background:var(--green)"></div></div></div>
+        <div style="margin-top:14px;padding:11px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm)">
+          <div style="font-size:9.5px;font-weight:700;color:var(--accent2);margin-bottom:5px">✦ تحليل النمط التلقائي</div>
+          <div style="font-size:11px;color:var(--text2)">تطابق 87% مع بصمة APT41. أسلوب التسلل الأساسي: Supply Chain + Spear Phishing مزدوج.</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════
+     PAGE: OSINT
+═════════════════════════════════════ -->
+<div class="page" id="page-osint">
+  <div class="sec-hd">
+    <div><div class="sec-title">مصادر OSINT والاستخبارات</div><div class="sec-sub">· P4: Collect Data · الملحق المرجعي</div></div>
+    <button class="btn btn-primary">🔄 تحديث جميع المصادر</button>
+  </div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">🏛️</span> المصادر الخارجية — القطاع العام</div></div>
+      <div class="card-body">
+        <div class="src-block"><div class="src-lbl" style="color:var(--accent2)">تغذية استخبارات التهديدات</div><div class="src-val">استخبارات التهديدات من البنك المركزي السعودي مباشرةً</div></div>
+        <div class="src-block"><div class="src-lbl" style="color:var(--accent2)">NCA (الهيئة الوطنية للأمن السيبراني)</div><div class="src-val">تنبيهات أمنية وطنية + IOCs محلية</div></div>
+        <div class="src-block"><div class="src-lbl" style="color:var(--accent2)">FS-ISAC · Saudi CERT</div><div class="src-val">تقارير تهديدات القطاع المالي العالمي</div></div>
+        <div class="src-block"><div class="src-lbl" style="color:var(--accent2)">EUROPOL · INTERPOL</div><div class="src-val">تقارير الجرائم الإلكترونية الدولية</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">🏢</span> المصادر الخارجية — القطاع الخاص</div></div>
+      <div class="card-body">
+        <div class="src-block"><div class="src-lbl" style="color:var(--green)">VirusTotal API</div><div class="src-val">تحليل ملفات + IOC enrichment · 2.1M عينة يومياً</div></div>
+        <div class="src-block"><div class="src-lbl" style="color:var(--green)">Shodan Search Engine</div><div class="src-val">رصد الأجهزة المكشوفة + خدمات الشبكة</div></div>
+        <div class="src-block"><div class="src-lbl" style="color:var(--green)">Recorded Future / MISP</div><div class="src-val">منصات استخبارات تجارية متخصصة</div></div>
+        <div class="src-block"><div class="src-lbl" style="color:var(--green)">MITRE ATT&CK Framework</div><div class="src-val">إطار TTPs مفتوح المصدر</div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">📚</span> أنواع الاستخبارات — الملحق المرجعي</div></div>
+      <div class="card-body">
+        <div class="pbar-wrap"><div class="pbar-hd"><span>OSINT (مفتوح المصدر)</span><span class="pbar-val" style="color:var(--accent2)">85%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:85%;background:var(--accent2)"></div></div></div>
+        <div class="pbar-wrap"><div class="pbar-hd"><span>TECHINT (تقني)</span><span class="pbar-val" style="color:var(--green)">70%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:70%;background:var(--green)"></div></div></div>
+        <div class="pbar-wrap"><div class="pbar-hd"><span>SOCMINT (وسائل تواصل)</span><span class="pbar-val" style="color:var(--amber)">55%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:55%;background:var(--amber)"></div></div></div>
+        <div class="pbar-wrap"><div class="pbar-hd"><span>Dark/Deep Web</span><span class="pbar-val" style="color:var(--purple)">40%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:40%;background:var(--purple)"></div></div></div>
+        <div class="pbar-wrap"><div class="pbar-hd"><span>HUMINT (بشري)</span><span class="pbar-val" style="color:var(--red)">25%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:25%;background:var(--red)"></div></div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><div class="card-title"><span class="c-ico">🔄</span> حالة تغذية البيانات المباشرة (P4 — Collect Data)</div><span class="pill p-green">تحديث كل 5 دقائق</span></div>
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>المصدر</th><th>نوع الاستخبارات</th><th>آخر تحديث</th><th>السجلات الإجمالية</th><th>سجلات اليوم</th><th>الحالة</th><th>إجراء</th></tr></thead>
+        <tbody>
+          <tr><td style="font-size:12px;font-weight:500;color:var(--text)">NVD (NIST)</td><td><span class="ioc-type it-ip">CVE</span></td><td style="font-family:var(--mono);font-size:10px">2025-05-10 08:00</td><td style="font-family:var(--mono)">847,234</td><td style="font-family:var(--mono);color:var(--green)">+23</td><td><span class="pill p-green">✓ متصل</span></td><td><button class="btn btn-sm btn-outline">تحديث</button></td></tr>
+          <tr><td style="font-size:12px;font-weight:500;color:var(--text)">VirusTotal API</td><td><span class="ioc-type it-hash">Hash</span></td><td style="font-family:var(--mono);font-size:10px">2025-05-10 09:30</td><td style="font-family:var(--mono)">2,103,541</td><td style="font-family:var(--mono);color:var(--green)">+89</td><td><span class="pill p-green">✓ متصل</span></td><td><button class="btn btn-sm btn-outline">تحديث</button></td></tr>
+          <tr><td style="font-size:12px;font-weight:500;color:var(--text)">Shodan API</td><td><span class="ioc-type it-ip">IP</span></td><td style="font-family:var(--mono);font-size:10px">2025-05-10 07:15</td><td style="font-family:var(--mono)">458,901</td><td style="font-family:var(--mono);color:var(--green)">+34</td><td><span class="pill p-green">✓ متصل</span></td><td><button class="btn btn-sm btn-outline">تحديث</button></td></tr>
+          <tr><td style="font-size:12px;font-weight:500;color:var(--text)">MISP Platform</td><td><span class="ioc-type it-domain">IOC</span></td><td style="font-family:var(--mono);font-size:10px">2025-05-10 09:45</td><td style="font-family:var(--mono)">134,782</td><td style="font-family:var(--mono);color:var(--green)">+12</td><td><span class="pill p-green">✓ متصل</span></td><td><button class="btn btn-sm btn-outline">تحديث</button></td></tr>
+          <tr><td style="font-size:12px;font-weight:500;color:var(--text)">Dark Web Monitor</td><td><span class="ioc-type it-url">HUMINT</span></td><td style="font-family:var(--mono);font-size:10px">2025-05-10 06:00</td><td style="font-family:var(--mono)">23,411</td><td style="font-family:var(--mono);color:var(--amber)">+3</td><td><span class="pill p-amber">⚠ تأخير</span></td><td><button class="btn btn-sm btn-danger">إعادة ربط</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════
+     PAGE: ML
+═════════════════════════════════════ -->
+<div class="page" id="page-ml">
+  <div class="sec-hd">
+    <div><div class="sec-title">نماذج الذكاء الاصطناعي</div><div class="sec-sub">· الملحق المرجعي· كشف الأنماط وتقليل الإنذارات الكاذبة</div></div>
+    <button class="btn btn-primary">🔄 إعادة تدريب النماذج</button>
+  </div>
+
+  <div class="metrics-row">
+    <div class="mcard mc-green"><div class="mc-lbl"><span class="mc-ico">🎯</span> دقة الكشف الإجمالية</div><div class="mc-val">98.6%</div><div class="mc-delta d-dn">↑ تحسن 3.2%</div></div>
+    <div class="mcard mc-blue"><div class="mc-lbl"><span class="mc-ico">🚨</span> False Positive Rate</div><div class="mc-val">1.4%</div><div class="mc-delta d-dn">↓ تراجع 2.1%</div></div>
+    <div class="mcard mc-amber"><div class="mc-lbl"><span class="mc-ico">⚡</span> زمن الاستدلال</div><div class="mc-val">4.2s</div><div class="mc-delta d-dn">↓ أسرع 22%</div></div>
+    <div class="mcard mc-red"><div class="mc-lbl"><span class="mc-ico">📊</span> سجلات التدريب</div><div class="mc-val">2.1M</div><div class="mc-delta d-up">↑ تحديث أسبوعي</div></div>
+  </div>
+
+  <div class="g2 g2eq">
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">🧠</span> النماذج المُطبَّقة (الملحق المرجعي</div></div>
+      <div class="card-body">
+        <div class="model-card">
+          <div class="model-hd"><span class="model-name">Isolation Forest</span><span class="pill p-green">✓ نشط</span></div>
+          <div class="model-desc">كشف الشذوذ في بيانات الشبكة · Unsupervised ·</div>
+          <div class="model-stats"><span>🎯 دقة: 97.8%</span><span>🚨 FP: 2.2%</span><span>📊 450K سجل</span></div>
+          <div style="margin-top:8px;height:3px;background:var(--bg4);border-radius:2px"><div style="height:100%;width:97.8%;background:var(--green);border-radius:2px"></div></div>
+        </div>
+        <div class="model-card">
+          <div class="model-hd"><span class="model-name">Random Forest Classifier</span><span class="pill p-green">✓ نشط</span></div>
+          <div class="model-desc">تصنيف التهديدات حسب النوع والخطورة · Supervised ·</div>
+          <div class="model-stats"><span>🎯 دقة: 99.1%</span><span>🚨 FP: 0.9%</span><span>📊 800K سجل</span></div>
+          <div style="margin-top:8px;height:3px;background:var(--bg4);border-radius:2px"><div style="height:100%;width:99.1%;background:var(--accent2);border-radius:2px"></div></div>
+        </div>
+        <div class="model-card">
+          <div class="model-hd"><span class="model-name">LSTM Neural Network</span><span class="pill p-amber">⚡ تدريب</span></div>
+          <div class="model-desc">التنبؤ بأنماط الهجمات المستقبلية · Time-series ·</div>
+          <div class="model-stats"><span>🎯 دقة: 94.3%</span><span>🚨 FP: 5.7%</span><span>📊 1.2M سجل</span></div>
+          <div style="margin-top:8px;height:3px;background:var(--bg4);border-radius:2px"><div style="height:100%;width:94.3%;background:var(--amber);border-radius:2px"></div></div>
+        </div>
+        <div class="model-card">
+          <div class="model-hd"><span class="model-name">NLP — Threat Intelligence Extraction</span><span class="pill p-blue">🔬 تجريبي</span></div>
+          <div class="model-desc">استخراج IOCs وTTPs من تقارير نصية ·· BERT-based</div>
+          <div class="model-stats"><span>🎯 دقة: 91.2%</span><span>🚨 FP: 8.8%</span><span>📊 320K تقرير</span></div>
+          <div style="margin-top:8px;height:3px;background:var(--bg4);border-radius:2px"><div style="height:100%;width:91.2%;background:var(--purple);border-radius:2px"></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="g-col">
+      <div class="card">
+        <div class="card-hd"><div class="card-title"><span class="c-ico">📈</span> مقاييس الأداء (P10 — KPIs)</div></div>
+        <div class="card-body">
+          <div class="pbar-wrap"><div class="pbar-hd"><span>دقة الكشف الإجمالية</span><span class="pbar-val" style="color:var(--green)">98.6%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:98.6%;background:var(--green)"></div></div></div>
+          <div class="pbar-wrap"><div class="pbar-hd"><span>تغطية MITRE ATT&CK</span><span class="pbar-val" style="color:var(--accent2)">76%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:76%;background:var(--accent2)"></div></div></div>
+          <div class="pbar-wrap"><div class="pbar-hd"><span>امتثال المبدأ الأمني</span><span class="pbar-val" style="color:var(--purple)">100%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:100%;background:var(--purple)"></div></div></div>
+          <div class="pbar-wrap"><div class="pbar-hd"><span>تقليل False Positives</span><span class="pbar-val" style="color:var(--amber)">-60%</span></div><div class="pbar-track"><div class="pbar-fill" style="width:60%;background:var(--amber)"></div></div></div>
+        </div>
+      </div>
+      <div class="card">
+        <div class="card-hd"><div class="card-title"><span class="c-ico">✦</span> توصية النموذج التلقائية</div></div>
+        <div class="card-body">
+          <div class="ai-card"><div class="ai-lbl">✦ توصية الذكاء الاصطناعي (P9)</div><div class="ai-text">بناءً على أنماط البيانات الأخيرة، يُوصى بزيادة حساسية Isolation Forest بنسبة 15% للكشف المبكر عن Lateral Movement قبل وصوله لمرحلة C2.</div></div>
+          <div class="ai-card" style="margin-top:10px"><div class="ai-lbl">📊 أسلوب التحليل — الملحق المرجعي</div><div class="ai-text">يُطبَّق المشروع ثلاثة أساليب تحليل: <strong style="color:var(--accent2)">Hypothesis-driven</strong> (Isolation Forest) · <strong style="color:var(--green)">Analyst-driven</strong> (Random Forest) · <strong style="color:var(--amber)">Contrarian</strong> (مراجعة الاستنتاجات)</div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════
+     PAGE: VULNERABILITIES
+═════════════════════════════════════ -->
+<div class="page" id="page-vuln">
+  <div class="sec-hd">
+    <div><div class="sec-title">إدارة الثغرات</div><div class="sec-sub">· رصد CVEs وZero-Days وتقييم المخاطر</div></div>
+    <button class="btn btn-primary">🔍 فحص جديد</button>
+  </div>
+
+  <div class="metrics-row">
+    <div class="mcard mc-red"><div class="mc-lbl"><span class="mc-ico">🔴</span> حرجة (CVSS 9+)</div><div class="mc-val">12</div><div class="mc-delta d-up">↑ 2 جديدة</div></div>
+    <div class="mcard mc-amber"><div class="mc-lbl"><span class="mc-ico">🟡</span> عالية (7–8.9)</div><div class="mc-val">47</div><div class="mc-delta d-up">↑ 8 هذا الأسبوع</div></div>
+    <div class="mcard mc-blue"><div class="mc-lbl"><span class="mc-ico">🔵</span> Zero-Days مرصودة</div><div class="mc-val">3</div><div class="mc-delta d-up">↑ 1 جديدة</div></div>
+    <div class="mcard mc-green"><div class="mc-lbl"><span class="mc-ico">✅</span> تم الإصلاح هذا الأسبوع</div><div class="mc-val">23</div><div class="mc-delta d-dn">↑ نشاط عالٍ</div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><div class="card-title"><span class="c-ico">🕳️</span> قائمة الثغرات — مرتبة حسب الخطورة</div><span class="pill p-red">Risk-based Prioritization</span></div>
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>CVE</th><th>المنتج المتأثر</th><th>CVSS</th><th>النوع</th><th>متاح للاستغلال</th><th>الإصلاح</th><th>الأولوية</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:var(--mono);font-size:11px;color:var(--red)">CVE-2025-1234</td><td style="font-size:12px">Apache Log4j Variant</td><td><span class="cvss cvss-crit">9.8</span></td><td><span class="pill p-red">RCE</span></td><td><span class="pill p-red">✓ نعم</span></td><td><span class="pill p-red">غير متاح</span></td><td><span class="pill p-red">فوري</span></td></tr>
+          <tr><td style="font-family:var(--mono);font-size:11px;color:var(--amber)">CVE-2024-3400</td><td style="font-size:12px">PAN-OS (Palo Alto)</td><td><span class="cvss cvss-crit">9.3</span></td><td><span class="pill p-red">OS Inject</span></td><td><span class="pill p-red">✓ نعم</span></td><td><span class="pill p-amber">متاح</span></td><td><span class="pill p-red">فوري</span></td></tr>
+          <tr><td style="font-family:var(--mono);font-size:11px;color:var(--amber)">CVE-2024-21413</td><td style="font-size:12px">Microsoft Outlook</td><td><span class="cvss cvss-crit">9.8</span></td><td><span class="pill p-amber">RCE</span></td><td><span class="pill p-amber">⚡ محدود</span></td><td><span class="pill p-green">متاح</span></td><td><span class="pill p-amber">هذا الأسبوع</span></td></tr>
+          <tr><td style="font-family:var(--mono);font-size:11px;color:var(--accent2)">CVE-2023-44487</td><td style="font-size:12px">HTTP/2 Rapid Reset</td><td><span class="cvss cvss-high">7.5</span></td><td><span class="pill p-blue">DoS</span></td><td><span class="pill p-green">✗ محدود</span></td><td><span class="pill p-green">متاح</span></td><td><span class="pill p-blue">هذا الشهر</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════
+     PAGE: REPORT
+═════════════════════════════════════ -->
+<div class="page" id="page-report">
+  <div class="sec-hd">
+    <div><div class="sec-title">تقرير التهديد — APT41 / Winnti Group</div><div class="sec-sub">· P9: Deliver Actionable Intelligence · TLP:AMBER</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline" onclick="window.print()">🖨️ طباعة</button>
+      <button class="btn btn-outline">📋 نسخ كـ Markdown</button>
+      <button class="btn btn-primary">📥 تصدير PDF</button>
+    </div>
+  </div>
+
+  <div class="rpt-hero">
+    <div class="rpt-big-icon">⚠️</div>
+    <div style="flex:1">
+      <div class="rpt-hd-title">APT41 / Winnti Group — تقرير استخباراتي شامل</div>
+      <div class="rpt-hd-sub">رقم التقرير: CTI-2025-0584 · إصدار: 1.0 · المحلل: وحدة CTI — القطاع المالي</div>
+    </div>
+    <div style="display:flex;gap:6px;align-items:center;flex-shrink:0">
+      <span class="tlp tlp-amber" style="font-size:11px;padding:4px 10px">TLP:AMBER</span>
+      <span class="pill p-red" style="font-size:11px;padding:5px 12px">CVSS 9.8 — حرج</span>
+    </div>
+  </div>
+
+  <div class="rpt-meta">
+    <div class="rpt-mi"><div class="rpt-mi-lbl">تاريخ الإصدار</div><div class="rpt-mi-val">10 مايو 2025 — 09:14 AST</div></div>
+    <div class="rpt-mi"><div class="rpt-mi-lbl">مستوى التصنيف</div><div class="rpt-mi-val">TLP:AMBER — للمؤسسات المالية فقط</div></div>
+    <div class="rpt-mi"><div class="rpt-mi-lbl">نطاق التوزيع</div><div class="rpt-mi-val">البنوك المحلية · شركات الدفع · الجهات التنظيمية</div></div>
+  </div>
+
+  <div class="rpt-sec">
+    <div class="rpt-sec-hd"><div class="rpt-sec-title"><span>📋</span> الملخص التنفيذي</div><span class="pill p-blue">P9 — Actionable Intelligence</span></div>
+    <div class="rpt-sec-body">
+      <div class="ai-card"><div class="ai-lbl">✦ ملخص مُولَّد بالذكاء الاصطناعي</div><div class="ai-text">رُصدت مؤشرات موثوقة تشير إلى نشاط مجموعة APT41 (Winnti / Double Dragon) المرتبطة بالصين ضد مؤسسات القطاع المالي السعودي. تستخدم المجموعة تقنيات Supply Chain Attack وShadowPad backdoor. يُوصى باتخاذ إجراءات وقائية فورية وفق المعايير الأمنية الرسمية.</div></div>
+      <div class="det-grid">
+        <div><div class="det-lbl">مجموعة التهديد</div><div class="det-val">APT41 / Winnti / Double Dragon / BARIUM</div></div>
+        <div><div class="det-lbl">الأصل الجغرافي</div><div class="det-val">جمهورية الصين الشعبية 🇨🇳</div></div>
+        <div><div class="det-lbl">الدوافع (P12 — Motivation)</div><div class="det-val">تجسس حكومي (espionage) + مكاسب مالية</div></div>
+        <div><div class="det-lbl">القطاعات المستهدفة</div><div class="det-val">مالي · طاقة · رعاية صحية · تقنية</div></div>
+        <div><div class="det-lbl">مستوى الثقة</div><div class="det-val" style="color:var(--red)">عالٍ جداً — 94% (Recorded Future)</div></div>
+        <div><div class="det-lbl">أول رصد</div><div class="det-val">10 مايو 2025 — 09:14 AST</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rpt-sec">
+    <div class="rpt-sec-hd"><div class="rpt-sec-title"><span>🔍</span> مؤشرات الاختراق التفصيلية (P18)</div><span class="pill p-amber">موثَّق</span></div>
+    <div class="rpt-sec-body">
+      <div class="det-grid">
+        <div><div class="det-lbl">عناوين IP الخبيثة (C2 Servers)</div><div class="ioc-block">45.132.227.89:443    <span style="color:var(--red)">← C2 Server رئيسي</span><br>185.220.101.44:80   <span style="color:var(--amber)">← Distribution Server</span><br>103.75.190.2:8443   <span style="color:var(--red)">← Exfiltration Gateway</span><br>91.240.118.172:443  <span style="color:var(--amber)">← Backup C2</span></div></div>
+        <div><div class="det-lbl">النطاقات الخبيثة</div><div class="ioc-block">update-srv-cdn[.]net<br>telemetry-ms[.]io<br>windefender-svc[.]com<br>secure-auth-portal[.]ru</div></div>
+        <div><div class="det-lbl">هاشات SHA-256 للملفات الخبيثة</div><div class="ioc-block" style="word-break:break-all">a3f2b9c1d4e8f7a2b5c0d3e6f9a1b4c7<br>d0e3f6a9b2c5d8e1f4a7b0c3d6e9f2a5<br>b14a7b8059d9e2d4a76ae7fbbd13c8ea<br>d0ed1ca7c9a8e9b28e0f4bd36d9e2f7a</div></div>
+        <div><div class="det-lbl">مسارات Registry الخبيثة</div><div class="ioc-block">HKCU\Software\ShadowPad<br>HKLM\System\ControlSet\Services\WinDefSvc<br>%APPDATA%\Microsoft\Windows\Themes\</div></div>
+      </div>
+    </div>
+  </div>
+
+  <div class="rpt-sec">
+    <div class="rpt-sec-hd"><div class="rpt-sec-title"><span>🛡️</span> التوصيات الأمنية الفورية (P9)</div><span class="pill p-green">6 توصيات</span></div>
+    <div class="rpt-sec-body">
+      <ul class="rec-list">
+        <li class="rec-item"><span class="rec-icon">✓</span>حظر عناوين IP المذكورة فوراً على جميع طبقات الجدار الناري (الأولوية: حرجة — خلال ساعة)</li>
+        <li class="rec-item"><span class="rec-icon">✓</span>تفعيل قواعد YARA للكشف عن ShadowPad وHIGHNOON في جميع نقاط النهاية</li>
+        <li class="rec-item"><span class="rec-icon">✓</span>مراجعة سلسلة التوريد البرمجية (Supply Chain) — تحديث جميع الحزم الخارجية</li>
+        <li class="rec-item"><span class="rec-icon">✓</span>تطبيق مبدأ أقل الصلاحيات (Least Privilege) + مراجعة حسابات الخدمة</li>
+        <li class="rec-item"><span class="rec-icon">✓</span>تفعيل MFA على جميع الحسابات الإدارية والوصول الخارجي (VPN/RDP)</li>
+        <li class="rec-item"><span class="rec-icon">✓</span>إبلاغ الجهة التنظيمية المختصة فوراً عبر <strong style="color:var(--accent2)">جهة التواصل الرسمية للأمن السيبراني</strong> وفق متطلبات الإبلاغ الإلزامية</li>
+      </ul>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════
+     PAGE: FIREWALL
+═════════════════════════════════════ -->
+<div class="page" id="page-firewall">
+  <div class="sec-hd">
+    <div><div class="sec-title">قواعد الجدار الناري الذكي</div><div class="sec-sub">· P19: Monitor Vulnerabilities · قواعد مُولَّدة تلقائياً من تحليل التهديدات</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline">📥 iptables</button>
+      <button class="btn btn-outline">📥 pfSense XML</button>
+      <button class="btn btn-primary">🚀 تطبيق الكل</button>
+    </div>
+  </div>
+
+  <div class="metrics-row">
+    <div class="mcard mc-red"><div class="mc-lbl"><span class="mc-ico">🚫</span> قواعد الحجب الفعلية</div><div class="mc-val">1,247</div><div class="mc-delta d-dn">↑ مُطبَّق</div></div>
+    <div class="mcard mc-amber"><div class="mc-lbl"><span class="mc-ico">⚡</span> قواعد التنبيه</div><div class="mc-val">389</div><div class="mc-delta d-neu">→ نشط</div></div>
+    <div class="mcard mc-green"><div class="mc-lbl"><span class="mc-ico">✅</span> قائمة بيضاء</div><div class="mc-val">124</div><div class="mc-delta d-neu">→ موثوق</div></div>
+    <div class="mcard mc-blue"><div class="mc-lbl"><span class="mc-ico">🔄</span> آخر تحديث</div><div class="mc-val">4.2s</div><div class="mc-delta d-dn">منذ</div></div>
+  </div>
+
+  <div class="card" style="margin-bottom:14px">
+    <div class="card-hd"><div class="card-title"><span class="c-ico">🔥</span> قواعد مُولَّدة تلقائياً من تحليل التهديدات</div><span class="pill p-red">أولوية حرجة</span></div>
+    <div style="overflow-x:auto">
+      <table class="tbl fw-table">
+        <thead><tr><th>الأولوية</th><th>المصدر</th><th>الوجهة</th><th>البروتوكول</th><th>المنفذ</th><th>الإجراء</th><th>السبب</th><th>التهديد</th><th>تطبيق</th></tr></thead>
+        <tbody>
+          <tr><td><div class="prio-badge pb1">1</div></td><td>45.132.227.89</td><td>ANY</td><td>TCP</td><td>443</td><td><span class="rule-act ra-deny">DENY</span></td><td style="font-family:var(--sans);font-size:11px;color:var(--text2)">APT41 C2 Server</td><td><span class="pill p-red" style="font-size:9px">APT41</span></td><td><button class="btn btn-sm btn-danger">تطبيق</button></td></tr>
+          <tr><td><div class="prio-badge pb1">1</div></td><td>185.220.101.44</td><td>ANY</td><td>TCP</td><td>80</td><td><span class="rule-act ra-deny">DENY</span></td><td style="font-family:var(--sans);font-size:11px;color:var(--text2)">BlackCat Distribution</td><td><span class="pill p-red" style="font-size:9px">Ransomware</span></td><td><button class="btn btn-sm btn-danger">تطبيق</button></td></tr>
+          <tr><td><div class="prio-badge pb1">1</div></td><td>103.75.190.2</td><td>ANY</td><td>TCP</td><td>8443</td><td><span class="rule-act ra-deny">DENY</span></td><td style="font-family:var(--sans);font-size:11px;color:var(--text2)">Exfiltration GW</td><td><span class="pill p-red" style="font-size:9px">APT41</span></td><td><button class="btn btn-sm btn-danger">تطبيق</button></td></tr>
+          <tr><td><div class="prio-badge pb2">2</div></td><td>ANY</td><td>INTERNAL</td><td>TCP</td><td>22,23</td><td><span class="rule-act ra-alert">ALERT</span></td><td style="font-family:var(--sans);font-size:11px;color:var(--text2)">Mirai SSH/Telnet</td><td><span class="pill p-amber" style="font-size:9px">Mirai</span></td><td><button class="btn btn-sm btn-outline">تطبيق</button></td></tr>
+          <tr><td><div class="prio-badge pb2">2</div></td><td>ANY</td><td>ANY</td><td>TCP</td><td>7547</td><td><span class="rule-act ra-deny">DENY</span></td><td style="font-family:var(--sans);font-size:11px;color:var(--text2)">IoT Exploit Port</td><td><span class="pill p-amber" style="font-size:9px">Mirai</span></td><td><button class="btn btn-sm btn-outline">تطبيق</button></td></tr>
+          <tr><td><div class="prio-badge pb3">3</div></td><td>*.ru *.kp *.ir</td><td>ANY</td><td>ANY</td><td>ANY</td><td><span class="rule-act ra-alert">ALERT</span></td><td style="font-family:var(--sans);font-size:11px;color:var(--text2)">High-risk GEO</td><td><span class="pill p-blue" style="font-size:9px">Geo-Risk</span></td><td><button class="btn btn-sm btn-outline">تطبيق</button></td></tr>
+          <tr><td><div class="prio-badge pb1">1</div></td><td>ANY</td><td>ANY</td><td>HTTP</td><td>80/443</td><td><span class="rule-act ra-deny">DENY</span></td><td style="font-family:var(--sans);font-size:11px;color:var(--text2)">JNDI Injection WAF</td><td><span class="pill p-red" style="font-size:9px">CVE-2025</span></td><td><button class="btn btn-sm btn-danger">تطبيق</button></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><div class="card-title"><span class="c-ico">💻</span> أوامر iptables الجاهزة للتطبيق الفوري</div><span class="pill p-green">جاهز للنسخ</span></div>
+    <div class="card-body">
+      <div class="code-block">
+<span class="c-cmt"># ══════════════════════════════════════════════════════════════</span>
+<span class="c-cmt"># CTI Platform — Auto-Generated Firewall Rules</span>
+<span class="c-cmt"># Generated: 2025-05-10 09:14 AST |</span>
+<span class="c-cmt"># Threat: APT41/BlackCat/Mirai | Priority: CRITICAL</span>
+<span class="c-cmt"># ══════════════════════════════════════════════════════════════</span>
+
+<span class="c-cmt"># [1] APT41 C2 Servers — Block All</span>
+<span class="c-cmd">iptables</span> <span class="c-arg">-A INPUT  -s 45.132.227.89  -j DROP</span>
+<span class="c-cmd">iptables</span> <span class="c-arg">-A OUTPUT -d 45.132.227.89  -j DROP</span>
+<span class="c-cmd">iptables</span> <span class="c-arg">-A INPUT  -s 185.220.101.44 -j DROP</span>
+<span class="c-cmd">iptables</span> <span class="c-arg">-A OUTPUT -d 185.220.101.44 -j DROP</span>
+<span class="c-cmd">iptables</span> <span class="c-arg">-A INPUT  -s 103.75.190.2   -j DROP</span>
+<span class="c-cmd">iptables</span> <span class="c-arg">-A INPUT  -s 91.240.118.172 -j DROP</span>
+
+<span class="c-cmt"># [2] Mirai Botnet — IoT Attack Vectors</span>
+<span class="c-cmd">iptables</span> <span class="c-arg">-A INPUT -p tcp --dport 7547 -j DROP</span>
+<span class="c-cmd">iptables</span> <span class="c-arg">-A INPUT -p tcp --dport 23   -j LOG --log-prefix "MIRAI_TELNET: "</span>
+<span class="c-cmd">iptables</span> <span class="c-arg">-A INPUT -p tcp --dport 23   -j DROP</span>
+
+<span class="c-cmt"># [3] WAF Rule — JNDI Injection (CVE-2025-1234)</span>
+<span class="c-cmd">iptables</span> <span class="c-arg">-A INPUT -m string --string "jndi:" --algo bm -j DROP</span>
+
+<span class="c-cmt"># [4] Save rules persistently</span>
+<span class="c-cmd">iptables-save</span> <span class="c-arg">&gt; /etc/iptables/rules.v4</span>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════
+     PAGE: RESPONSE
+═════════════════════════════════════ -->
+<div class="page" id="page-response">
+  <div class="sec-hd">
+    <div><div class="sec-title">الاستجابة للحوادث</div><div class="sec-sub">· خطة الاستجابة المُولَّدة تلقائياً</div></div>
+    <div style="display:flex;gap:8px">
+      <button class="btn btn-outline">📥 تصدير Playbook</button>
+      <button class="btn btn-danger">🚨 تفعيل حالة طوارئ</button>
+    </div>
+  </div>
+
+  <div class="g3">
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">🚨</span> الحوادث النشطة الآن</div><span class="pill p-red">3 نشط</span></div>
+      <div class="card-body">
+        <div class="alert-row ar-crit"><span class="ar-icon">🔴</span><div><div class="ar-title">APT41 — محاولة C2 نشطة</div><div class="ar-desc">استجابة: حجب IP + تنبيه CISO</div><div class="ar-time">نشط منذ 14 دقيقة</div></div></div>
+        <div class="alert-row ar-high"><span class="ar-icon">🟡</span><div><div class="ar-title">Phishing — 3 محاولات</div><div class="ar-desc">استجابة: حجب نطاق + إبلاغ مستخدمين</div><div class="ar-time">نشط منذ 2 ساعة</div></div></div>
+        <div class="alert-row ar-info"><span class="ar-icon">🔵</span><div><div class="ar-title">Port Scan — مستمر</div><div class="ar-desc">استجابة: مراقبة + Rate limiting</div><div class="ar-time">نشط منذ 3 ساعات</div></div></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">📋</span> خطوات الاستجابة الفورية</div></div>
+      <div class="card-body">
+        <div class="tl">
+          <div class="tl-item"><div class="tl-dot td-red"></div><div class="tl-body"><div class="tl-title" style="color:var(--red)">1. الاحتواء الفوري (0–30 دقيقة)</div><div class="tl-desc">حجب IPs · عزل الأنظمة المصابة · تعطيل الحسابات المخترقة</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-amber"></div><div class="tl-body"><div class="tl-title" style="color:var(--amber)">2. التحقيق والتحليل (1–4 ساعات)</div><div class="tl-desc">جمع الأدلة الجنائية · تحليل السجلات · تحديد النطاق الكامل</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-blue"></div><div class="tl-body"><div class="tl-title">3. الاستئصال (4–24 ساعة)</div><div class="tl-desc">إزالة البرمجيات الخبيثة · تحديث كلمات المرور · تطبيق التصحيحات</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-green"></div><div class="tl-body"><div class="tl-title" style="color:var(--green)">4. الاسترداد والإبلاغ (24–72 ساعة)</div><div class="tl-desc">إعادة الخدمات · إبلاغ الجهات التنظيمية · توثيق الدروس المستفادة</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">📞</span> جهات الاتصال الطارئة</div></div>
+      <div class="card-body">
+        <div style="display:flex;flex-direction:column;gap:8px">
+          <div style="padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm)">
+            <div style="font-size:10px;font-weight:700;color:var(--red);margin-bottom:3px">المعايير الرسمية — المركز الاستشاري للأمن السيبراني</div>
+            <div style="font-size:11px;color:var(--text2);font-family:var(--mono)">جهة التواصل الرسمية للأمن السيبراني</div>
+          </div>
+          <div style="padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm)">
+            <div style="font-size:10px;font-weight:700;color:var(--amber);margin-bottom:3px">الهيئة الوطنية للأمن السيبراني (NCA)</div>
+            <div style="font-size:11px;color:var(--text2);font-family:var(--mono)">966-11-XXXXXXX</div>
+          </div>
+          <div style="padding:10px;background:var(--bg3);border:1px solid var(--border);border-radius:var(--r-sm)">
+            <div style="font-size:10px;font-weight:700;color:var(--accent2);margin-bottom:3px">CISO الداخلي</div>
+            <div style="font-size:11px;color:var(--text2)">متاح 24/7 — تصعيد فوري</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════
+     PAGE: COMPLIANCE
+═════════════════════════════════════ -->
+<div class="page" id="page-المعيار">
+  <div class="sec-hd">
+    <div><div class="sec-title">مبادئ استخبارات التهديدات السيبرانية للتهديدات السيبرانية</div><div class="sec-sub">مبادئ استخبارات التهديدات السيبرانية للقطاع المالي · فبراير 2022 · الإصدار الأول</div></div>
+    <span class="chip chip-green" style="font-size:11px;padding:6px 14px">✓ امتثال 84% (16 من 19 مبدأً)</span>
+  </div>
+
+  <div class="المعيار-doms">
+    <div class="المعيار-dc d1 sel"><div class="sdc-num">Domain 1 · 11 مبدأ</div><div class="sdc-name">Core CTI Principles</div><div class="sdc-pct">100%</div><div class="sdc-bar"><div class="sdc-fill" style="width:100%"></div></div></div>
+    <div class="المعيار-dc d2"><div class="sdc-num">Domain 2 · 3 مبادئ</div><div class="sdc-name">Strategic CTI</div><div class="sdc-pct">100%</div><div class="sdc-bar"><div class="sdc-fill" style="width:100%"></div></div></div>
+    <div class="المعيار-dc d3"><div class="sdc-num">Domain 3 · 3 مبادئ</div><div class="sdc-name">Operational CTI</div><div class="sdc-pct">67%</div><div class="sdc-bar"><div class="sdc-fill" style="width:67%"></div></div></div>
+    <div class="المعيار-dc d4"><div class="sdc-num">Domain 4 · 2 مبادئ</div><div class="sdc-name">Technical & Tactical</div><div class="sdc-pct">100%</div><div class="sdc-bar"><div class="sdc-fill" style="width:100%"></div></div></div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><div class="card-title"><span class="c-ico">📋</span> جميع المبادئ الـ 19 — خريطة الامتثال الكاملة</div><span class="pill p-blue">معايير استخبارات التهديدات السيبرانية v1 · 2022</span></div>
+    <div style="overflow-x:auto">
+      <table class="tbl" id="المعيار-tbl">
+        <thead><tr><th>المبدأ</th><th>الاسم العربي</th><th>الاسم الإنجليزي</th><th>النطاق</th><th>التطبيق في المشروع</th><th>الأدوات المستخدمة</th><th>الحالة</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ═════════════════════════════════════
+     PAGE: ROADMAP
+═════════════════════════════════════ -->
+<div class="page" id="page-roadmap">
+  <div class="sec-hd">
+    <div><div class="sec-title">خطة التطوير (Roadmap)</div><div class="sec-sub">المعايير الرسمية — متطلب تقديم خطة عمل مُعتمدة · 6 أشهر للمبادئ الأساسية · 12 شهراً للاستراتيجية</div></div>
+    <button class="btn btn-primary">📥 تصدير الخطة</button>
+  </div>
+
+  <div class="metrics-row metrics-row-3">
+    <div class="mcard mc-green"><div class="mc-lbl"><span class="mc-ico">✅</span> مكتمل (المرحلة 1)</div><div class="mc-val">16</div><div class="mc-delta d-dn">مبدأ مُنفَّذ</div></div>
+    <div class="mcard mc-amber"><div class="mc-lbl"><span class="mc-ico">⚡</span> قيد التطوير</div><div class="mc-val">2</div><div class="mc-delta d-up">مبدأ جزئي</div></div>
+    <div class="mcard mc-red"><div class="mc-lbl"><span class="mc-ico">○</span> مطلوب (Gap)</div><div class="mc-val">1</div><div class="mc-delta d-up">P17 — Sandbox</div></div>
+  </div>
+
+  <div class="g2 g2eq">
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">📅</span> المرحلة 1: الأساسية والتقنية (6 أشهر)</div><span class="pill p-green">✓ مكتملة</span></div>
+      <div class="card-body">
+        <div class="tl">
+          <div class="tl-item"><div class="tl-dot td-green"></div><div class="tl-body"><div class="tl-title">P1–P6: البنية التحتية الأساسية</div><div class="tl-time">الشهر 1–2</div><div class="tl-desc">تعريف الأدوار + جمع البيانات + SOPs + تصنيف TLP ✓</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-green"></div><div class="tl-body"><div class="tl-title">P7: نماذج الذكاء الاصطناعي</div><div class="tl-time">الشهر 2–3</div><div class="tl-desc">Random Forest + Isolation Forest + تقليل FP ✓</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-green"></div><div class="tl-body"><div class="tl-title">P18–P19: IOC وإدارة الثغرات</div><div class="tl-time">الشهر 3–4</div><div class="tl-desc">IOC Feed + CVE Monitor + YARA Rules ✓</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-green"></div><div class="tl-body"><div class="tl-title">P8–P9: التقارير والإجراءات</div><div class="tl-time">الشهر 4–6</div><div class="tl-desc">Report Generator + Firewall Rules + Playbooks ✓</div></div></div>
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="card-hd"><div class="card-title"><span class="c-ico">📅</span> المرحلة 2: الاستراتيجية (6–12 شهراً)</div><span class="pill p-amber">⚡ قيد التطوير</span></div>
+      <div class="card-body">
+        <div class="tl">
+          <div class="tl-item"><div class="tl-dot td-blue"></div><div class="tl-body"><div class="tl-title">P12–P14: Strategic CTI</div><div class="tl-time">الشهر 6–8</div><div class="tl-desc">خريطة التهديدات + سيناريوهات الهجوم + RFI System</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-amber"></div><div class="tl-body"><div class="tl-title">P15–P16: Operational CTI</div><div class="tl-time">الشهر 8–10</div><div class="tl-desc">Kill Chain Automation + TTP Profiling بالكامل</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-red"></div><div class="tl-body"><div class="tl-title">P17: Malware Sandbox ← Gap</div><div class="tl-time">الشهر 10–12</div><div class="tl-desc">بيئة عزل حقيقية + تحليل ديناميكي للبرمجيات الخبيثة</div></div></div>
+          <div class="tl-item"><div class="tl-dot td-blue"></div><div class="tl-body"><div class="tl-title">P10–P11: التكامل والتحسين</div><div class="tl-time">الشهر 11–12</div><div class="tl-desc">إطار تقييم المرونة الأمنية + Red Team Integration + KPIs</div></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="card-hd"><div class="card-title"><span class="c-ico">⚠️</span> Gap Analysis — الفجوات المطلوب معالجتها</div></div>
+    <div style="overflow-x:auto">
+      <table class="tbl">
+        <thead><tr><th>المبدأ</th><th>الاسم</th><th>الفجوة</th><th>الخطة</th><th>الجدول الزمني</th><th>الأولوية</th></tr></thead>
+        <tbody>
+          <tr><td style="font-family:var(--mono);color:var(--amber)">P16</td><td style="font-size:12px">Identify TTPs</td><td style="font-size:11px;color:var(--text2)">يحتاج بيانات تدريب أكبر لنسب TTPs الجديدة</td><td style="font-size:11px;color:var(--text2)">توسيع مجموعة بيانات MITRE + تدريب NLP</td><td><span class="pill p-amber">الشهر 8</span></td><td><span class="pill p-amber">متوسطة</span></td></tr>
+          <tr><td style="font-family:var(--mono);color:var(--red)">P17</td><td style="font-size:12px">Identify Malware</td><td style="font-size:11px;color:var(--text2)">يحتاج بيئة Sandbox معزولة حقيقية</td><td style="font-size:11px;color:var(--text2)">نشر Cuckoo Sandbox أو ANY.RUN API</td><td><span class="pill p-red">الشهر 11</span></td><td><span class="pill p-red">عالية</span></td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+  </div><!-- /content -->
+</main>
+</div><!-- /shell -->
+
+<script>
+// ── Clock ──
+function tick() {
+  const n = new Date();
+  document.getElementById('clock').textContent = n.toLocaleTimeString('ar-SA',{hour12:false}) + ' AST';
+}
+tick(); setInterval(tick, 1000);
+
+// ── Navigation ──
+function go(id, el) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+  const pg = document.getElementById('page-' + id);
+  if (pg) pg.classList.add('active');
+  if (el) el.classList.add('active');
+}
+
+// ── Activity chart ──
+(function() {
+  const days = ['أحد','اثن','ثلا','أرب','خمي','جمع','سبت'];
+  const vals = [[80,40],[110,74],[65,37],[155,85],[225,95],[188,88],[248,102]];
+  const cols = ['#378ADD','#378ADD','#378ADD','#f59e0b','#ef4444','#ef4444','#ef4444'];
+  const maxV = Math.max(...vals.map(v=>v[0]+v[1]));
+  const ac = document.getElementById('act-chart');
+  days.forEach((d,i) => {
+    const h1 = Math.round(vals[i][0]/maxV*128);
+    const h2 = Math.round(vals[i][1]/maxV*128);
+    ac.innerHTML += `<div class="cb-grp">
+      <div class="cb-wrap">
+        <div class="cb-bar" style="height:${h1}px;background:${cols[i]};opacity:0.75"></div>
+        <div class="cb-bar" style="height:${h2}px;background:${cols[i]};opacity:0.38"></div>
+      </div>
+      <div class="cb-lbl">${d}</div>
+    </div>`;
+  });
+})();
+
+// ── IOC data ──
+const IOC = {
+  ip: [
+    {cls:'it-ip',type:'IPv4',val:'45.132.227.89',conf:'98%',cc:'var(--red)'},
+    {cls:'it-ip',type:'IPv4',val:'185.220.101.44',conf:'94%',cc:'var(--red)'},
+    {cls:'it-ip',type:'IPv4',val:'103.75.190.2',conf:'87%',cc:'var(--amber)'},
+    {cls:'it-ip',type:'IPv4',val:'91.240.118.172',conf:'81%',cc:'var(--amber)'},
+  ],
+  domain: [
+    {cls:'it-domain',type:'Domain',val:'update-srv-cdn[.]net',conf:'97%',cc:'var(--red)'},
+    {cls:'it-domain',type:'Domain',val:'telemetry-ms[.]io',conf:'93%',cc:'var(--red)'},
+    {cls:'it-domain',type:'Domain',val:'windefender-svc[.]com',conf:'88%',cc:'var(--amber)'},
+    {cls:'it-domain',type:'Domain',val:'secure-auth-portal[.]ru',conf:'79%',cc:'var(--amber)'},
+  ],
+  hash: [
+    {cls:'it-hash',type:'SHA256',val:'a3f2b9c1d4e8...b0c3',conf:'100%',cc:'var(--red)'},
+    {cls:'it-hash',type:'MD5',val:'5d41402abc...4800',conf:'100%',cc:'var(--red)'},
+    {cls:'it-hash',type:'SHA256',val:'b14a7b8059...f7a3',conf:'91%',cc:'var(--amber)'},
+    {cls:'it-hash',type:'SHA1',val:'da39a3ee5e...5adb',conf:'96%',cc:'var(--red)'},
+  ],
+};
+function renderIOC(key, targetId) {
+  const el = document.getElementById(targetId);
+  if (!el) return;
+  el.innerHTML = IOC[key].map(i =>
+    `<div class="ioc-row"><span class="ioc-type ${i.cls}">${i.type}</span><span class="ioc-val">${i.val}</span><span class="ioc-conf" style="color:${i.cc}">${i.conf}</span></div>`
+  ).join('');
+}
+renderIOC('ip','ioc-dash');
+
+function switchTab(btn, key, targetId) {
+  const tabs = btn.closest('.card-body').querySelectorAll('.tab');
+  tabs.forEach(t => t.classList.remove('on'));
+  btn.classList.add('on');
+  renderIOC(key, targetId);
+}
+
+// ── IOC Full Table ──
+(function(){
+  const data = [
+    {cls:'it-ip',type:'IPv4',val:'45.132.227.89',threat:'APT41',conf:'98%',src:'VirusTotal',date:'2025-05-09',sev:'p-red'},
+    {cls:'it-ip',type:'IPv4',val:'185.220.101.44',threat:'BlackCat',conf:'94%',src:'Shodan',date:'2025-05-08',sev:'p-red'},
+    {cls:'it-domain',type:'Domain',val:'update-srv-cdn[.]net',threat:'APT41',conf:'97%',src:'OSINT',date:'2025-05-09',sev:'p-red'},
+    {cls:'it-hash',type:'SHA256',val:'a3f2b9c1...b0c3',threat:'Winnti',conf:'100%',src:'MISP',date:'2025-05-07',sev:'p-red'},
+    {cls:'it-ip',type:'IPv4',val:'103.75.190.2',threat:'APT41',conf:'87%',src:'NVD',date:'2025-05-10',sev:'p-amber'},
+    {cls:'it-domain',type:'Domain',val:'telemetry-ms[.]io',threat:'APT41',conf:'93%',src:'Recorded Future',date:'2025-05-10',sev:'p-red'},
+    {cls:'it-url',type:'URL',val:'hxxp://45.132.227.89/update',threat:'BlackCat',conf:'91%',src:'Dark Web',date:'2025-05-08',sev:'p-amber'},
+  ];
+  const tb = document.querySelector('#ioc-full-tbl');
+  if(!tb) return;
+  data.forEach(i => {
+    tb.innerHTML += `<tr>
+      <td><span class="ioc-type ${i.cls}">${i.type}</span></td>
+      <td style="font-family:var(--mono);font-size:11px">${i.val}</td>
+      <td><span class="pill p-red">${i.threat}</span></td>
+      <td style="color:var(--red);font-family:var(--mono)">${i.conf}</td>
+      <td style="color:var(--text2)">${i.src}</td>
+      <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${i.date}</td>
+      <td><span class="pill ${i.sev}">حرج</span></td>
+    </tr>`;
+  });
+})();
+
+// ── MITRE ATT&CK ──
+(function(){
+  const data = [
+    {p:'Recon',cells:['Active Scan','OSINT','Phishing Recon','Search Open Repos'],h:['hot','cool','hot','cool']},
+    {p:'Initial Access',cells:['Spear Phishing','Supply Chain','Drive-by','Exploit Public'],h:['hot','warm','cool','warm']},
+    {p:'Execution',cells:['PowerShell','WMI','Sched. Task','Cmd Line'],h:['warm','cool','warm','cool']},
+    {p:'Persistence',cells:['Registry Run','Boot Autostart','Backdoor','Hijack Exec'],h:['hot','warm','hot','cool']},
+    {p:'Priv Esc',cells:['Token Impersonation','Exploit API','Bypass UAC'],h:['warm','cool','cool']},
+    {p:'Lateral Move',cells:['Pass-the-Hash','Remote Services','Taint Shared'],h:['warm','warm','cool']},
+    {p:'Collection',cells:['Browser Data','Keylogging','Screen Capture'],h:['cool','cool','cool']},
+    {p:'C2',cells:['HTTPS Tunnel','DNS Tunneling','App Layer Proto'],h:['hot','warm','cool']},
+    {p:'Exfiltration',cells:['Via C2','Encrypted','Alt Protocol'],h:['hot','warm','cool']},
+  ];
+  const mg = document.getElementById('mitre-matrix');
+  if(!mg) return;
+  data.forEach(col => {
+    let h = `<div class="mitre-col"><div class="mitre-phase">${col.p}</div>`;
+    col.cells.forEach((c,i) => { h += `<div class="mc ${col.h[i]}" title="${c}">${c}</div>`; });
+    mg.innerHTML += h + '</div>';
+  });
+})();
+
+// ── Threats full table ──
+(function(){
+  const data = [
+    {name:'APT41 — Winnti Group',type:'APT',src:'🇨🇳 الصين',cvss:'9.8',cvc:'cvss-crit',tlp:'AMBER',sev:'p-red',sl:'حرج',المعيار:'P7,P12,P15'},
+    {name:'BlackCat Ransomware v3',type:'Ransomware',src:'🌐 متعدد',cvss:'9.4',cvc:'cvss-crit',tlp:'AMBER',sev:'p-red',sl:'حرج',المعيار:'P7,P17,P18'},
+    {name:'Spear Phishing Campaign',type:'Social Eng.',src:'🇷🇺 روسيا',cvss:'7.9',cvc:'cvss-high',tlp:'GREEN',sev:'p-amber',sl:'عالٍ',المعيار:'P7,P13,P9'},
+    {name:'CVE-2025-1234 Zero-Day',type:'Vulnerability',src:'🌐 متعدد',cvss:'7.5',cvc:'cvss-high',tlp:'RED',sev:'p-amber',sl:'عالٍ',المعيار:'P7,P19'},
+    {name:'Mirai Botnet Variant',type:'DDoS',src:'🌐 متعدد',cvss:'6.1',cvc:'cvss-med',tlp:'GREEN',sev:'p-blue',sl:'متوسط',المعيار:'P7,P15'},
+    {name:'Lazarus Group Campaign',type:'APT',src:'🇰🇵 كوريا ش.',cvss:'8.2',cvc:'cvss-high',tlp:'AMBER',sev:'p-amber',sl:'عالٍ',المعيار:'P7,P12'},
+    {name:'Cobalt Strike Beacon',type:'RAT / C2',src:'🌐 متعدد',cvss:'7.1',cvc:'cvss-high',tlp:'GREEN',sev:'p-amber',sl:'عالٍ',المعيار:'P16,P18'},
+    {name:'ALPHV Financial Extortion',type:'Ransomware',src:'🇷🇺 روسيا',cvss:'8.9',cvc:'cvss-crit',tlp:'AMBER',sev:'p-red',sl:'حرج',المعيار:'P7,P17'},
+  ];
+  const tb = document.querySelector('#threats-tbl tbody');
+  if(!tb) return;
+  data.forEach(t => {
+    tb.innerHTML += `<tr>
+      <td><div class="th-cell"><div class="sev-bar ${t.sev==='p-red'?'sb-crit':t.sev==='p-amber'?'sb-high':'sb-med'}"></div><div><div class="th-name">${t.name}</div></div></div></td>
+      <td><span class="pill ${t.sev}">${t.type}</span></td>
+      <td style="font-size:12px">${t.src}</td>
+      <td><span class="cvss ${t.cvc}">${t.cvss}</span></td>
+      <td><span class="tlp tlp-${t.tlp.toLowerCase()}">TLP:${t.tlp}</span></td>
+      <td style="font-family:var(--mono);font-size:10px;color:var(--text3)">${t.المعيار}</td>
+      <td><span class="pill ${t.sev}">${t.sl}</span></td>
+      <td><button class="btn btn-sm btn-outline" onclick="go('report',document.querySelectorAll('.nav-item')[8])">تقرير</button></td>
+    </tr>`;
+  });
+})();
+
+// ── Compliance Table ──
+(function(){
+  const dcColor = {d1:'var(--accent2)',d2:'var(--green)',d3:'var(--amber)',d4:'var(--purple)'};
+  const data = [
+    {n:'P1',ar:'تحديد الأدوار والمسؤوليات',en:'Define Roles & Responsibilities',d:'Core CTI',dc:'d1',impl:'فريق CTI مخصص + CISO Interface + قنوات تواصل',tools:'CTI Dashboard + Role Matrix',s:'ok'},
+    {n:'P2',ar:'تخطيط متطلبات الاستخبارات',en:'Define Planning & Collection Requirements',d:'Core CTI',dc:'d1',impl:'محرك OSINT + تصفية القطاع المالي + مراجعة دورية',tools:'Requirement Engine + Priority Matrix',s:'ok'},
+    {n:'P3',ar:'اختيار المصادر والتحقق منها',en:'Select & Validate Relevant Sources',d:'Core CTI',dc:'d1',impl:'NVD + VirusTotal + Shodan + MISP + Dark Web',tools:'Source Validator + Trust Score',s:'ok'},
+    {n:'P4',ar:'جمع البيانات من مصادر الاستخبارات',en:'Collect Data Through Intelligence Sources',d:'Core CTI',dc:'d1',impl:'OSINT + TECHINT + SOCMINT + Dark Web Intelligence',tools:'Python Scrapers + API Integrations',s:'ok'},
+    {n:'P5',ar:'إجراءات التشغيل المعيارية (SOPs)',en:'Define Specific Standard Operating Procedures',d:'Core CTI',dc:'d1',impl:'بروتوكولات موثقة لكل نوع استخبارات + الملحق المرجعي
+    {n:'P6',ar:'معالجة المعلومات وتصنيفها',en:'Process and Classify Information',d:'Core CTI',dc:'d1',impl:'TLP Classification + تخزين آمن + Secure DB',tools:'TLP Classifier + Encrypted Storage',s:'ok'},
+    {n:'P7',ar:'تحليل المعلومات',en:'Analyze Information',d:'Core CTI',dc:'d1',impl:'Random Forest + Isolation Forest + LSTM + NLP (الملحق المرجعي
+    {n:'P8',ar:'مشاركة الاستخبارات',en:'Share Intelligence',d:'Core CTI',dc:'d1',impl:'تقارير HTML +
+    {n:'P9',ar:'تقديم استخبارات قابلة للتنفيذ',en:'Deliver Actionable Threat Intelligence',d:'Core CTI',dc:'d1',impl:'قواعد Firewall + توصيات أمنية + Playbooks',tools:'Firewall Rule Generator + Playbook Engine',s:'ok'},
+    {n:'P10',ar:'التحسين المستمر لأساليب الاستخبارات',en:'Continuously Improve Methods',d:'Core CTI',dc:'d1',impl:'KPIs + Feedback Loop + MLOps Pipeline',tools:'MLflow + KPI Dashboard + OKRs',s:'ok'},
+    {n:'P11',ar:'دمج CTI مع العمليات',en:'Integrate CTI',d:'Core CTI',dc:'d1',impl:'إطار تقييم المرونة الأمنية + Red Team + SOC Integration',tools:'SIEM Integration + Red Team Connector',s:'ok'},
+    {n:'P12',ar:'تحديد خريطة التهديدات السيبرانية',en:'Identify a Cyber Threat Landscape',d:'Strategic CTI',dc:'d2',impl:'خريطة APT Groups للقطاع المالي + اتجاهات التهديد',tools:'Threat Landscape Widget + APT Map',s:'ok'},
+    {n:'P13',ar:'تحديد سيناريوهات الهجوم الاستراتيجية',en:'Identify Strategic Cyber Attack Scenarios',d:'Strategic CTI',dc:'d2',impl:'Attack Scenario Simulator + تقييم الأثر',tools:'Scenario Engine + Impact Analyzer',s:'ok'},
+    {n:'P14',ar:'طلبات المعلومات والتقييمات المخصصة',en:'Elaborate RFIs and Tailored Threat Assessments',d:'Strategic CTI',dc:'d2',impl:'نظام RFI + ملفات تهديد مخصصة + Tailored Reports',tools:'RFI System + Report Generator',s:'ok'},
+    {n:'P15',ar:'تحديد سلسلة الهجوم',en:'Define the Attack Chain',d:'Operational CTI',dc:'d3',impl:'Kill Chain + Unified Kill Chain + MITRE ATT&CK',tools:'Attack Chain Diagram + Kill Chain Visualizer',s:'ok'},
+    {n:'P16',ar:'تحديد TTPs',en:'Identify TTPs',d:'Operational CTI',dc:'d3',impl:'MITRE ATT&CK Navigator + TTP Profiling — يحتاج توسعة',tools:'ATT&CK Navigator + Threat Actor Profiles',s:'part'},
+    {n:'P17',ar:'تحديد البرامج الخبيثة والأدوات',en:'Identify Malware and Tools',d:'Operational CTI',dc:'d3',impl:'Hash Matching + VirusTotal — Sandbox قيد التطوير (P17 Gap)',tools:'VirusTotal API + Cuckoo (مخطط له)',s:'gap'},
+    {n:'P18',ar:'جمع مؤشرات الاختراق (IoCs)',en:'Collect IoCs',d:'Technical & Tactical',dc:'d4',impl:'IOC Feed + MISP + YARA Rules + Threat Intel Platforms',tools:'MISP + STIX 2.1 + YARA + OpenCTI',s:'ok'},
+    {n:'P19',ar:'مراقبة الثغرات والإبلاغ عنها',en:'Monitor and Report Vulnerabilities',d:'Technical & Tactical',dc:'d4',impl:'CVE Monitor + CVSS Risk Scoring + IPS + Patch Management',tools:'NVD API + IPS + Vulnerability Scanner',s:'ok'},
+  ];
+  const tb = document.querySelector('#المعيار-tbl tbody');
+  if(!tb) return;
+  const sm = {ok:'<span class="sc sc-ok">✓ مُغطى</span>',part:'<span class="sc sc-part">⚡ جزئي</span>',gap:'<span class="sc sc-gap">○ فجوة</span>'};
+  data.forEach(p => {
+    tb.innerHTML += `<tr>
+      <td style="font-family:var(--mono);font-size:12px;font-weight:700;color:${dcColor[p.dc]}">${p.n}</td>
+      <td style="font-size:12px;font-weight:500;color:var(--text)">${p.ar}</td>
+      <td style="font-size:10.5px;color:var(--text3)">${p.en}</td>
+      <td><span style="font-size:9.5px;padding:2px 7px;border-radius:9px;background:rgba(255,255,255,0.05);color:${dcColor[p.dc]};border:1px solid ${dcColor[p.dc]}40">${p.d}</span></td>
+      <td style="font-size:11px;color:var(--text2)">${p.impl}</td>
+      <td style="font-size:10.5px;color:var(--text3);font-family:var(--mono)">${p.tools}</td>
+      <td>${sm[p.s]}</td>
+    </tr>`;
+  });
+})();
+</script>
+</body>
+</html>
